@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Login() {
   return (
-    <div className="min-h-full  bg-darkBlue">
+    <div className=" min-h-screen bg-darkBlue">
       <div className="mx-auto w-full max-w-md px-8">
         <div className="flex flex-col items-center space-y-6">
           <div className=" py-12">
