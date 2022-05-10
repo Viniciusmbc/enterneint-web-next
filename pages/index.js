@@ -24,27 +24,28 @@ export default function Home() {
             className="bg-darkBlue"
           />
         </div>
-        <div>
-          <p className="px-4 text-xl text-white">Trending</p>
-          <img src="/app/styles/image-avatar.png" alt="user" />
-        </div>
-        <div className=" flex  overflow-x-auto">
+
+        <h1 className="px-4 text-xl text-white">Trending</h1>
+
+        <div className="flex  overflow-x-auto">
+          <svg width="12" height="14" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="m10.518.75.399 12.214-5.084-4.24-4.535 4.426L.75 1.036l9.768-.285Z"
+              stroke="#eeeeee"
+              strokeWidth="1.5"
+              fill="#eeeeee"
+            />
+          </svg>
           <img
             src="https://github.com/Viniciusmbc/enterneint-web-next/blob/main/public/thumbnails/beyond-earth/trending/large.jpg?raw=true"
-            width={240}
-            height={140}
             alt="beyond-earth"
           />
           <img
             src="https://github.com/Viniciusmbc/enterneint-web-next/blob/main/public/thumbnails/bottom-gear/trending/large.jpg?raw=true"
-            width={240}
-            height={140}
             alt="bottom-gear"
           />
           <img
             src="https://github.com/Viniciusmbc/enterneint-web-next/blob/main/public/thumbnails/1998/trending/large.jpg?raw=true"
-            width={240}
-            height={140}
             alt="1998"
           />
         </div>

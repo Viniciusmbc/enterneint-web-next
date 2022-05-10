@@ -53,7 +53,13 @@ export default function Navbar() {
           />
         </svg>
       </div>
-      <div></div>
+      <div>
+        <img
+          src="https://github.com/Viniciusmbc/enterneint-web-next/blob/main/public/image-avatar.png?raw=true"
+          alt="avatar"
+          className="rounded-full h-10 w-10 mx-2"
+        />
+      </div>
     </nav>
   );
 }
