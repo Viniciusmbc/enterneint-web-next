@@ -75,7 +75,7 @@ export default function Trending() {
         </div>
         <div>
           {" "}
-          <p className="absolute left-4 bottom-4 text-white text-sm">
+          <p className="absolute left-4 bottom-4 text-white text-sm font-medium ">
             Beyond Earth
           </p>
         </div>

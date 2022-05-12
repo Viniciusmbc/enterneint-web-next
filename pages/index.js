@@ -1,5 +1,6 @@
 import Head from "next/head";
 import Image from "next/image";
+import Cards from "../components/Cards";
 import NestedLayout from "../components/NestedLayout";
 import Trending from "../components/Trending";
 
@@ -8,7 +9,7 @@ export default function Home() {
     <>
       <Head></Head>
       <main className=" bg-darkBlue">
-        <div className="flex p-4">
+        <div className="flex p-4 md:pt-16">
           <svg
             className="mr-4"
             width="32"
@@ -32,6 +33,81 @@ export default function Home() {
           <Trending />
         </div>
         <h2 className="text-white text-xl my-6 ml-4">Recommended for you</h2>
+
+        <section className=" grid grid-cols-2 mx-4 gap-4 md:grid-cols-3  lg:grid-cols-4 ">
+          <Cards
+            title={"The Great Lands"}
+            year={"2019"}
+            category={"Movie"}
+            image={
+              "https://github.com/Viniciusmbc/enterneint-web-next/blob/main/public/thumbnails/the-great-lands/regular/medium.jpg?raw=true"
+            }
+            classificao={"E"}
+          />
+          <Cards
+            title={"The Great Lands"}
+            year={"2019"}
+            category={"Movie"}
+            image={
+              "https://github.com/Viniciusmbc/enterneint-web-next/blob/main/public/thumbnails/the-great-lands/regular/medium.jpg?raw=true"
+            }
+            classificao={"E"}
+          />
+          <Cards
+            title={"The Great Lands"}
+            year={"2019"}
+            category={"Movie"}
+            image={
+              "https://github.com/Viniciusmbc/enterneint-web-next/blob/main/public/thumbnails/the-great-lands/regular/medium.jpg?raw=true"
+            }
+            classificao={"E"}
+          />
+          <Cards
+            title={"The Great Lands"}
+            year={"2019"}
+            category={"Movie"}
+            image={
+              "https://github.com/Viniciusmbc/enterneint-web-next/blob/main/public/thumbnails/the-great-lands/regular/medium.jpg?raw=true"
+            }
+            classificao={"E"}
+          />
+          <Cards
+            title={"The Great Lands"}
+            year={"2019"}
+            category={"Movie"}
+            image={
+              "https://github.com/Viniciusmbc/enterneint-web-next/blob/main/public/thumbnails/the-great-lands/regular/medium.jpg?raw=true"
+            }
+            classificao={"E"}
+          />
+          <Cards
+            title={"The Great Lands"}
+            year={"2019"}
+            category={"Movie"}
+            image={
+              "https://github.com/Viniciusmbc/enterneint-web-next/blob/main/public/thumbnails/the-great-lands/regular/medium.jpg?raw=true"
+            }
+            classificao={"E"}
+          />
+          <Cards
+            title={"The Great Lands"}
+            year={"2019"}
+            category={"Movie"}
+            image={
+              "https://github.com/Viniciusmbc/enterneint-web-next/blob/main/public/thumbnails/the-great-lands/regular/medium.jpg?raw=true"
+            }
+            classificao={"E"}
+          />
+          <Cards
+            title={"The Great Lands"}
+            year={"2019"}
+            category={"Movie"}
+            image={
+              "https://github.com/Viniciusmbc/enterneint-web-next/blob/main/public/thumbnails/the-great-lands/regular/medium.jpg?raw=true"
+            }
+            classificao={"E"}
+          />
+        </section>
       </main>
     </>
   );
