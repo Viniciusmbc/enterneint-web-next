@@ -27,7 +27,7 @@ export default function Home() {
           />
         </div>
 
-        <h1 className="pb-4 pl-4 text-xl text-white">Trending</h1>
+        <h1 className="pb-4 pl-4 text-xl text-red">Trending</h1>
 
         <div className="flex  w-full overflow-x-auto">
           <Trending />

@@ -1,12 +1,14 @@
-import '../styles/globals.css'
-import Navbar from '../components/Navbar'
-import Layout from '../components/Layout'
+import "../styles/globals.css";
+
+import { AuthContextProvider } from "../context/AuthContext";
 
 export default function MyApp({ Component, pageProps }) {
   // Use the layout defined at the page level, if available
-  const getLayout = Component.getLayout || ((page) => page)
+  const getLayout = Component.getLayout || ((page) => page);
 
-  return getLayout(<Component {...pageProps} />)
+  return getLayout(
+    <AuthContextProvider>
+      <Component {...pageProps} />
+    </AuthContextProvider>
+  );
 }
-
-
