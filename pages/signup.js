@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import Link from "next/link";
 
 export default function Signup() {
   const { user, signup } = useAuth();
@@ -7,6 +8,7 @@ export default function Signup() {
     email: "",
     password: "",
   });
+  const [error, setError] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -14,7 +16,7 @@ export default function Signup() {
     try {
       await signup(data.email, data.password);
     } catch (err) {
-      console.log(err);
+      setError(err.message);
     }
 
     console.log(data);
@@ -39,33 +41,47 @@ export default function Signup() {
                 required
                 type="email"
                 placeholder="Email address"
-                className="mt-10 border-b-2 border-greyishBlue bg-semiDarkBlue py-2"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                className="mt-10 border-b-2 border-greyishBlue bg-semiDarkBlue py-2 text-white"
+                value={data.email}
+                onChange={(e) => setData({ ...data, email: e.target.value })}
               />
               <input
                 type="password"
                 placeholder="Password"
-                className="mt-6 border-b-2 border-greyishBlue bg-semiDarkBlue py-2"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                className="mt-6 border-b-2 border-greyishBlue bg-semiDarkBlue py-2 text-white"
+                value={data.password}
+                onChange={(e) => 
+                  setData({ ...data, password: e.target.value })}
               />
               <input
                 type="password"
                 placeholder="Repeat Password"
-                className="mt-6 border-b-2 border-greyishBlue bg-semiDarkBlue py-2"
+                className="mt-6 border-b-2 border-greyishBlue bg-semiDarkBlue py-2 text-white"
+                onChange={(e) => {
+                  if(e.target.value === data.password) {
+                    setData({ ...data, password: e.target.value })
+                } else {
+                  "Passwords do not match"
+                }
+                }}
               />
-              <button className="mt-10 rounded-md bg-red py-2">
+              
+                  
+
+              <button className="mt-10 rounded-md bg-red py-2" type="submit">
                 Create an account
               </button>
+              {error && <p className="text-red text-sm mt-4">{error.message}</p>}
 
               <div className="mx-auto py-6">
                 <p className="text-white">
                   Alread have an account?
+                  <Link href={"/login"} >
                   <a className="text-red"> Login</a>
+                  </Link>
+                  
                 </p>
               </div>
-              {error && <p className="text-red">{error}</p>}
             </div>
           </form>
         </div>

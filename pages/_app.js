@@ -1,14 +1,33 @@
+// Styles
 import "../styles/globals.css";
 
+// Context
 import { AuthContextProvider } from "../context/AuthContext";
+
+// Components
+import ProtectedRoute from "../components/ProtectedRoute";
+
+// Router
+import { useRouter } from "next/router";
+
+const noAuthRequired = ['/dashboard/home', '/login', '/signup'];
 
 export default function MyApp({ Component, pageProps }) {
   // Use the layout defined at the page level, if available
   const getLayout = Component.getLayout || ((page) => page);
 
+  const router = useRouter();
+
   return getLayout(
     <AuthContextProvider>
-      <Component {...pageProps} />
+      {noAuthRequired.includes(router.pathname) ? (
+        <Component {...pageProps} />
+      ) : (
+        <ProtectedRoute>
+          <Component {...pageProps} />
+        </ProtectedRoute>
+      )}
+      
     </AuthContextProvider>
   );
 }

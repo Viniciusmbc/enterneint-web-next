@@ -1,14 +1,28 @@
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
+  const { user, login } = useAuth();
+  const router = useRouter();
+
   const [data, setData] = useState({
     email: "",
     password: "",
   });
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    console.log("login:", email, password);
+
+    console.log(user)
+    try {
+      await login(data.email, data.password);
+      router.push("/")
+    } catch (err) {
+      console.log(err);
+    }
+    console.log("login:", data.email, data.password);
   };
 
   return (
@@ -24,31 +38,35 @@ export default function Login() {
             </svg>
           </div>
 
-          <div className="mx-auto flex w-80 flex-col rounded-md bg-semiDarkBlue px-6">
-            <h1 className="mt-6 text-2xl text-white">Login</h1>
+          <form onClick={handleLogin} className="mx-auto flex w-80 flex-col rounded-md bg-semiDarkBlue px-6">
+            <label className="mt-6 text-2xl text-white">Login</label>
             <input
               type="email"
               placeholder="Email address"
-              className="mt-10 border-b-2 border-greyishBlue bg-semiDarkBlue py-2"
+              className="mt-10 border-b-2 border-greyishBlue bg-semiDarkBlue py-2 text-white"
               value={data.email}
               onChange={(e) => setData({ ...data, email: e.target.value })}
             />
             <input
               type="password"
               placeholder="Password"
-              className="mt-6 border-b-2 border-greyishBlue bg-semiDarkBlue py-2"
+              className="mt-6 border-b-2 border-greyishBlue bg-semiDarkBlue py-2 text-white"
               value={data.password}
               onChange={(e) => setData({ ...data, password: e.target.value })}
             />
-            <button className="mt-10 rounded-md bg-red py-2">
+            <button className="mt-10 rounded-md bg-red py-2" type="submit">
               Login to your account
             </button>
             <div className="mx-auto py-6">
               <p className="text-white">
+                Don't have an account?
+                </p>
+                <Link href="/signup">
                 <a className="text-red"> Sign Up</a>
-              </p>
+                </Link>
+            
             </div>
-          </div>
+          </form>
         </div>
       </div>
     </div>
