@@ -1,6 +1,16 @@
 import Link from "next/link";
 
 export default function Login() {
+  const [data, setData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    console.log("login:", email, password);
+  };
+
   return (
     <div className=" min-h-screen bg-darkBlue">
       <div className="mx-auto w-full max-w-md px-8">
@@ -20,11 +30,15 @@ export default function Login() {
               type="email"
               placeholder="Email address"
               className="mt-10 border-b-2 border-greyishBlue bg-semiDarkBlue py-2"
+              value={data.email}
+              onChange={(e) => setData({ ...data, email: e.target.value })}
             />
             <input
               type="password"
               placeholder="Password"
               className="mt-6 border-b-2 border-greyishBlue bg-semiDarkBlue py-2"
+              value={data.password}
+              onChange={(e) => setData({ ...data, password: e.target.value })}
             />
             <button className="mt-10 rounded-md bg-red py-2">
               Login to your account
