@@ -474,12 +474,6 @@ export default function NestedLayout({ children }) {
         setActiveTab={setActiveTab}
       />
 
-      {activeTab === -1 ? (
-        <div>Social Media</div>
-      ) : (
-        <div>{tabs[activeTab].data}</div>
-      )}
-
       {children}
     </main>
   );
