@@ -10,7 +10,7 @@ import ProtectedRoute from "../components/ProtectedRoute";
 // Router
 import { useRouter } from "next/router";
 
-const noAuthRequired = ['/dashboard/home', '/login', '/signup'];
+const noAuthRequired = ["/", "/login", "/signup", "/movies", "/tvseries"];
 
 export default function MyApp({ Component, pageProps }) {
   // Use the layout defined at the page level, if available
@@ -27,7 +27,6 @@ export default function MyApp({ Component, pageProps }) {
           <Component {...pageProps} />
         </ProtectedRoute>
       )}
-      
     </AuthContextProvider>
   );
 }

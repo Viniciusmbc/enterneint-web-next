@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export default function Cards({
   year,
   category,
@@ -8,7 +10,7 @@ export default function Cards({
 }) {
   return (
     <div className="relative max-w-[280px] flex-shrink-0 ">
-      <div className=" flex items-center right-0 absolute bg-darkBlue/50  w-8 h-8 rounded-full">
+      <button className=" flex items-center right-2 top-2 absolute bg-darkBlue/50  w-8 h-8 rounded-full z-10 md:right-4 md:top-4">
         {bookmark ? (
           <svg
             className=" mx-auto"
@@ -38,8 +40,14 @@ export default function Cards({
             />
           </svg>
         )}
-      </div>
-      <img className="rounded" src={image} alt="The Great Lands" />
+      </button>
+      <Image
+        width={280}
+        height={174}
+        className="rounded"
+        src={image}
+        alt={`${title} poster`}
+      />
 
       <div className="flex items-center mt-2">
         <p className="text-white/75 text-xs">{year}</p>
