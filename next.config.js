@@ -1,12 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  
-}
+};
 
 module.exports = {
   ...nextConfig,
-  images: {
-    domains: ['github.com']
+  experimental: {
+    images: {
+      layoutRaw: true,
+    },
   },
-}
+  images: {
+    domains: ["github.com"],
+  },
+};

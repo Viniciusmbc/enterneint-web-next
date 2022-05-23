@@ -9,8 +9,8 @@ import { useEffect, useState } from "react";
 
 // components
 import Cards from "../components/Cards";
-import NestedLayout from "../components/NestedLayout";
 import SearchBar from "../components/SearchBar";
+import { getLayout } from "../components/NestedLayout";
 
 const fetcher = (url) => fetch(url).then((r) => r.json());
 
@@ -23,11 +23,11 @@ export default function Series() {
     <>
       <Head></Head>
       <main className=" bg-darkBlue">
-        <SearchBar shows={"movies"} />
+        <SearchBar shows={"TV Series"} />
 
-        <h1 className=" pb-9 pl-4 text-xl text-red">Movies</h1>
+        <h1 className=" pb-9 pl-4 text-xl text-red">TV Series</h1>
 
-        <section className=" grid grid-cols-2 mx-4 gap-4 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
+        <section className=" grid grid-cols-2  gap-4  mx-4 mb-14 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
           {data &&
             data.map(({ title, year, category, thumbnail, rating }) => (
               <Cards
@@ -46,6 +46,4 @@ export default function Series() {
   );
 }
 
-Series.getLayout = function getLayout(page) {
-  return <NestedLayout>{page}</NestedLayout>;
-};
+Series.getLayout = getLayout;

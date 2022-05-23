@@ -15,10 +15,10 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    console.log(user)
+    console.log(user);
     try {
       await login(data.email, data.password);
-      router.push("/")
+      router.push("/");
     } catch (err) {
       console.log(err);
     }
@@ -27,7 +27,7 @@ export default function Login() {
 
   return (
     <div className=" min-h-screen bg-darkBlue">
-      <div className="mx-auto w-full max-w-md px-8">
+      <div className="mx-auto w-full max-w-md ">
         <div className="flex flex-col items-center space-y-6">
           <div className=" py-12">
             <svg width="33" height="27" xmlns="http://www.w3.org/2000/svg">
@@ -38,7 +38,10 @@ export default function Login() {
             </svg>
           </div>
 
-          <form onClick={handleLogin} className="mx-auto flex w-80 flex-col rounded-md bg-semiDarkBlue px-6">
+          <form
+            onClick={handleLogin}
+            className="mx-auto flex flex-col rounded-md bg-semiDarkBlue px-10"
+          >
             <label className="mt-6 text-2xl text-white">Login</label>
             <input
               type="email"
@@ -57,14 +60,13 @@ export default function Login() {
             <button className="mt-10 rounded-md bg-red py-2" type="submit">
               Login to your account
             </button>
-            <div className="mx-auto py-6">
+            <div className="py-6">
               <p className="text-white">
                 Don't have an account?
-                </p>
                 <Link href="/signup">
-                <a className="text-red"> Sign Up</a>
+                  <a className="text-red"> Sign Up</a>
                 </Link>
-            
+              </p>{" "}
             </div>
           </form>
         </div>

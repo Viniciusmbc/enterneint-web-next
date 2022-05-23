@@ -1,8 +1,14 @@
-import { useState } from "react";
+// import from react
+import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+
+// import Nextjs
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 export default function Signup() {
+  const router = useRouter();
+
   const { user, signup } = useAuth();
   const [data, setData] = useState({
     email: "",
@@ -15,6 +21,7 @@ export default function Signup() {
 
     try {
       await signup(data.email, data.password);
+      router.push("/");
     } catch (err) {
       setError(err.message);
     }
@@ -34,54 +41,53 @@ export default function Signup() {
               />
             </svg>
           </div>
-          <form onSubmit={handleSubmit}>
-            <div className="mx-auto flex w-80 flex-col rounded-md bg-semiDarkBlue px-6">
-              <h1 className="mt-6 text-2xl text-white">Sign Up</h1>
-              <input
-                required
-                type="email"
-                placeholder="Email address"
-                className="mt-10 border-b-2 border-greyishBlue bg-semiDarkBlue py-2 text-white"
-                value={data.email}
-                onChange={(e) => setData({ ...data, email: e.target.value })}
-              />
-              <input
-                type="password"
-                placeholder="Password"
-                className="mt-6 border-b-2 border-greyishBlue bg-semiDarkBlue py-2 text-white"
-                value={data.password}
-                onChange={(e) => 
-                  setData({ ...data, password: e.target.value })}
-              />
-              <input
-                type="password"
-                placeholder="Repeat Password"
-                className="mt-6 border-b-2 border-greyishBlue bg-semiDarkBlue py-2 text-white"
-                onChange={(e) => {
-                  if(e.target.value === data.password) {
-                    setData({ ...data, password: e.target.value })
+          <form
+            onSubmit={handleSubmit}
+            className="mx-auto flex w-80 flex-col rounded-md bg-semiDarkBlue px-10"
+          >
+            <h1 className="mt-6 text-2xl text-white">Sign Up</h1>
+            <input
+              required
+              type="email"
+              placeholder="Email address"
+              className="mt-10 border-b-2 border-greyishBlue bg-semiDarkBlue py-2 text-white"
+              value={data.email}
+              onChange={(e) => setData({ ...data, email: e.target.value })}
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              required
+              className="mt-6 border-b-2 border-greyishBlue bg-semiDarkBlue py-2 text-white"
+              value={data.password}
+              onChange={(e) => setData({ ...data, password: e.target.value })}
+            />
+            <input
+              type="password"
+              required
+              placeholder="Repeat Password"
+              className="mt-6 border-b-2 border-greyishBlue bg-semiDarkBlue py-2 text-white"
+              onChange={(e) => {
+                if (e.target.value === data.password) {
+                  setData({ ...data, password: e.target.value });
                 } else {
-                  "Passwords do not match"
+                  ("Passwords do not match");
                 }
-                }}
-              />
-              
-                  
+              }}
+            />
 
-              <button className="mt-10 rounded-md bg-red py-2" type="submit">
-                Create an account
-              </button>
-              {error && <p className="text-red text-sm mt-4">{error.message}</p>}
+            <button className="mt-10 rounded-md bg-red py-2" type="submit">
+              Create an account
+            </button>
+            {error && <p className="text-red text-sm mt-4">{error.message}</p>}
 
-              <div className="mx-auto py-6">
-                <p className="text-white">
-                  Alread have an account?
-                  <Link href={"/login"} >
+            <div className="mx-auto py-6">
+              <p className="text-white">
+                Alread have an account?
+                <Link href={"/login"}>
                   <a className="text-red"> Login</a>
-                  </Link>
-                  
-                </p>
-              </div>
+                </Link>
+              </p>
             </div>
           </form>
         </div>

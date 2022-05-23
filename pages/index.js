@@ -1,19 +1,18 @@
 // next
 import Head from "next/head";
 
-// SWR
-import useSWR from "swr";
-
-// react
+// React
 import { useEffect, useState } from "react";
 
-// components
+// Components
 import Cards from "../components/Cards";
-import NestedLayout from "../components/NestedLayout";
 import Trending from "../components/Trending";
 import SearchBar from "../components/SearchBar";
 
-// firebase
+// Layouts
+import { getLayout } from "../components/NestedLayout";
+
+// Firebase
 import { set, ref, onValue } from "firebase/database";
 import { db } from "../firebase/config";
 
@@ -28,29 +27,33 @@ useEffect(() => {
   }, []);
 */
 
-const fetcher = (url) => fetch(url).then((r) => r.json());
-
-export default function Home() {
-  const { data, error } = useSWR("/api/hello", fetcher);
-
-  console.log(data, error);
-
+export default function Home({ allshows, trendings }) {
   return (
     <>
       <Head></Head>
       <main className=" bg-darkBlue">
         <SearchBar shows={"movies or TV series"} />
 
-        <h1 className="pb-4 pl-4 text-xl text-red">Trending</h1>
+        <h1 className=" pl-4 text-xl text-white">Trending</h1>
+        {trendings &&
+          trendings.map(
+            ({ title, year, category, thumbnail, rating }, index) => (
+              <Trending
+                key={index}
+                title={title}
+                year={year}
+                category={category}
+                rating={rating}
+                image={thumbnail.trending.large}
+              />
+            )
+          )}
 
-        <div className="flex  w-full overflow-x-auto">
-          <Trending />
-        </div>
         <h2 className="text-white text-xl my-6 ml-4">Recommended for you</h2>
 
-        <section className=" grid grid-cols-2 mx-4 gap-4 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
-          {data &&
-            data.map(({ title, year, category, thumbnail, rating }) => (
+        <section className=" grid grid-cols-2 mx-4 gap-4 mb-14 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
+          {allshows &&
+            allshows.map(({ title, year, category, thumbnail, rating }) => (
               <Cards
                 key={title}
                 bookmark={false}
@@ -67,6 +70,18 @@ export default function Home() {
   );
 }
 
-Home.getLayout = function getLayout(page) {
-  return <NestedLayout>{page}</NestedLayout>;
-};
+export async function getStaticProps() {
+  const res = await fetch("http://localhost:3000/api/hello");
+  const data = await res.json();
+
+  const trendings = data.filter((show) => show.isTrending === true);
+
+  return {
+    props: {
+      allshows: data,
+      trendings,
+    },
+  };
+}
+
+Home.getLayout = getLayout;

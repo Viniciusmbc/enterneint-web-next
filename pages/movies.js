@@ -9,9 +9,9 @@ import { useEffect, useState } from "react";
 
 // components
 import Cards from "../components/Cards";
-import NestedLayout from "../components/NestedLayout";
+
 import SearchBar from "../components/SearchBar";
-import Navbar from "../components/Navbar";
+import { getLayout } from "../components/NestedLayout";
 
 const fetcher = (url) => fetch(url).then((r) => r.json());
 
@@ -30,9 +30,9 @@ export default function Movies() {
 
         <section className=" grid grid-cols-2 mx-4 gap-4 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
           {data &&
-            data.map(({ title, year, category, thumbnail, rating }) => (
+            data.map(({ title, year, category, thumbnail, rating }, index) => (
               <Cards
-                key={title}
+                key={index}
                 bookmark={false}
                 title={title}
                 year={year}
@@ -47,11 +47,4 @@ export default function Movies() {
   );
 }
 
-Movies.getLayout = function getLayout(page) {
-  return (
-    <NestedLayout>
-      <Navbar activePage={"movies"} />
-      {page}
-    </NestedLayout>
-  );
-};
+Movies.getLayout = getLayout;
