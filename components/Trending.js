@@ -3,9 +3,9 @@ import Image from "next/image";
 
 export default function Trending({ year, category, rating, title, image }) {
   return (
-    <div className="flex  w-full overflow-x-auto">
-      <div className="relative ml-4 mr-2 w-9/12 max-w-md flex-shrink-0 ">
-        <div className=" flex items-center right-0 absolute bg-darkBlue/50  w-8 h-8 rounded-full">
+    <>
+      <div className="relative ml-4 mr-2 w-9/12  max-w-md  flex-shrink-0 ">
+        <div className=" flex items-center right-0 absolute bg-darkBlue/50  w-8 h-8 rounded-full z-10">
           <svg
             className=" mx-auto"
             width="12"
@@ -21,7 +21,7 @@ export default function Trending({ year, category, rating, title, image }) {
           </svg>
         </div>
 
-        <div className=" bottom-10 left-4 absolute flex items-center">
+        <div className=" bottom-10 left-4 absolute flex items-center z-10">
           <p className="text-white/75 text-xs">{year}</p>
           <div className=" bg-white rounded-full w-1 h-1 mx-2"></div>
           {category === "Movie" ? (
@@ -36,7 +36,9 @@ export default function Trending({ year, category, rating, title, image }) {
         </div>
         <div>
           {" "}
-          <p className="absolute left-4 bottom-4 text-white text-sm">{title}</p>
+          <p className="absolute left-4 bottom-4 text-white text-sm z-10">
+            {title}
+          </p>
         </div>
 
         <Image
@@ -45,9 +47,8 @@ export default function Trending({ year, category, rating, title, image }) {
           alt={`${title} poster`}
           width={470}
           height={230}
-          layout="raw"
         />
       </div>
-    </div>
+    </>
   );
 }

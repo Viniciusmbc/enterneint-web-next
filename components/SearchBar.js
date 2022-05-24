@@ -1,6 +1,39 @@
-export default function SearchBar({ shows }) {
+import { useRef, useState, useCallback } from "react";
+
+export default function SearchBar({ shows, data, onFocusHandler }) {
+  console.log(query);
+  const searchRef = useRef(null);
+  const [query, setQuery] = useState("");
+  const [active, setActive] = useState(false);
+  const [results, setResults] = useState([]);
+
+  const onChange = useCallback((event) => {
+    setQuery(event.target.value);
+    if (query.length) {
+      setResults(data);
+    } else {
+      setResults([]);
+    }
+  }, []);
+
+  const onFocus = () => {
+    setActive(true);
+    window.addEventListener("click", onClick);
+  };
+
+  const onClick = useCallback((event) => {
+    onFocusHandler(true);
+    if (searchRef.current && !searchRef.current.contains(event.target)) {
+      setActive(false);
+      onFocusHandler(false);
+      setQuery("");
+      setResults([]);
+      window.removeEventListener("click", onClick);
+    }
+  }, []);
+
   return (
-    <div className="flex p-4  md:pt-16">
+    <div className="flex p-4  md:pt-16" ref={searchRef}>
       <svg
         className="mr-4"
         width="32"
@@ -12,7 +45,14 @@ export default function SearchBar({ shows }) {
           fill="#FFF"
         />
       </svg>
-      <input placeholder={`Search for a ${shows}`} className="bg-darkBlue" />
+      <input
+        placeholder={`Search for a ${shows}`}
+        className="bg-darkBlue text-white"
+        type="search"
+        onFocus={onFocus}
+        onChange={onChange}
+        value={query}
+      />
     </div>
   );
 }

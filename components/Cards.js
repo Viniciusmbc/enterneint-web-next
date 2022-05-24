@@ -47,6 +47,7 @@ export default function Cards({
         className="rounded"
         src={image}
         alt={`${title} poster`}
+        layout="raw"
       />
 
       <div className="flex items-center mt-2">
