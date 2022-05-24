@@ -30,43 +30,42 @@ export default function Home({ allshows, trendings }) {
   return (
     <>
       <Head></Head>
-      <main className=" bg-darkBlue">
-        <SearchBar
-          shows={"movies or TV series"}
-          data={allshows}
-          onFocusHandler={(status) => checkSearchStatus(status)}
-        />
 
-        {!searchActive && (
-          <>
-            <h1 className=" pl-4 text-xl text-white mb-4">Trending</h1>
-            <div className="flex  w-full overflow-x-auto">
-              {trendings &&
-                trendings.map(
-                  ({ title, year, category, thumbnail, rating }, index) => (
-                    <Trending
-                      key={index}
-                      title={title}
-                      year={year}
-                      category={category}
-                      rating={rating}
-                      image={thumbnail.trending.large}
-                    />
-                  )
-                )}
-            </div>
+      <SearchBar
+        shows={"movies or TV series"}
+        data={allshows}
+        onFocusHandler={(status) => checkSearchStatus(status)}
+      />
 
-            <h2 className="text-white text-xl my-6 ml-4">
-              Recommended for you
-            </h2>
-          </>
-        )}
+      {!searchActive && (
+        <>
+          <h1 className=" pl-4 text-xl text-white mb-4">Trending</h1>
+          <div className="flex  w-full overflow-x-auto">
+            {trendings &&
+              trendings.map(
+                ({ title, year, category, thumbnail, rating }, index) => (
+                  <Trending
+                    key={index}
+                    title={title}
+                    year={year}
+                    category={category}
+                    rating={rating}
+                    image={thumbnail.trending.large}
+                  />
+                )
+              )}
+          </div>
 
+          <h2 className="text-white text-xl my-6 ml-4">Recommended for you</h2>
+        </>
+      )}
+
+      {!searchActive && (
         <section className=" grid grid-cols-2 mx-4 gap-4 mb-14 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
-          {allshows &&
-            allshows.map(({ title, year, category, thumbnail, rating }) => (
+          {allshows.map(
+            ({ title, year, category, thumbnail, rating }, index) => (
               <Cards
-                key={title}
+                key={index}
                 bookmark={false}
                 title={title}
                 year={year}
@@ -74,9 +73,10 @@ export default function Home({ allshows, trendings }) {
                 image={thumbnail.regular.medium}
                 classificao={rating}
               />
-            ))}
+            )
+          )}
         </section>
-      </main>
+      )}
     </>
   );
 }
