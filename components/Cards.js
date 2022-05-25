@@ -8,9 +8,28 @@ export default function Cards({
   bookmark,
   classificao,
 }) {
+  
+  const onClick = async (e) => {
+    e.preventDefault();
+    const res = await fetch("http://localhost:3000/api/bookmark", {
+      method: "UPDATE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        title,
+        year,
+        category,
+        image,
+        classificao,
+      }),
+    });
+
   return (
     <div className="relative flex-shrink-0 ">
-      <button className=" flex items-center right-2 top-2 absolute bg-darkBlue/50  w-8 h-8 rounded-full z-10 md:right-4 md:top-4">
+      <button className=" flex items-center right-2 top-2 absolute bg-darkBlue/50  w-8 h-8 rounded-full z-10 md:right-4 md:top-4" onClick={() => {
+
+      } }>
         {bookmark ? (
           <svg
             className=" mx-auto"
