@@ -9,7 +9,7 @@ export default function Cards({
   classificao,
 }) {
   return (
-    <div className="relative max-w-[280px] flex-shrink-0 ">
+    <div className="relative flex-shrink-0 ">
       <button className=" flex items-center right-2 top-2 absolute bg-darkBlue/50  w-8 h-8 rounded-full z-10 md:right-4 md:top-4">
         {bookmark ? (
           <svg
@@ -42,9 +42,9 @@ export default function Cards({
         )}
       </button>
       <Image
+        className="rounded"
         width={280}
         height={174}
-        className="rounded"
         src={image}
         alt={`${title} poster`}
         layout="raw"

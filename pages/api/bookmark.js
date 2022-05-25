@@ -6,5 +6,20 @@ export default function handler(req, res) {
   const movies = movies_series.filter((movie) => {
     return movie.category.toLowerCase().includes("movie");
   });
-  res.status(200).json(movies);
+  const { method } = req;
+  switch (method) {
+    case "GET":
+      res.statusCode = 200;
+      res.setHeader("Content-Type", "application/json");
+      res.end(JSON.stringify(movies));
+      break;
+    case "UPDATE":
+      res.statusCode = 200;
+      res.setHeader("Content-Type", "application/json");
+      res.end(JSON.stringify(movies));
+    default:
+      res.statusCode = 404;
+      res.setHeader("Content-Type", "application/json");
+      res.end(JSON.stringify({ message: "Not found" }));
+  }
 }
