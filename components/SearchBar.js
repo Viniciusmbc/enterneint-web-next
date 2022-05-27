@@ -1,7 +1,7 @@
 import { useRef, useState, useCallback } from "react";
 import Cards from "./Cards";
 
-export default function SearchBar({ shows, data, onFocusHandler }) {
+export default function SearchBar({ shows, data, onFocusHandler, title }) {
   const searchRef = useRef(null);
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(false);
@@ -38,7 +38,7 @@ export default function SearchBar({ shows, data, onFocusHandler }) {
     }
   }, []);
 
-  console.log(results.length);
+  console.log(typeof results.length);
 
   return (
     <>
@@ -63,10 +63,11 @@ export default function SearchBar({ shows, data, onFocusHandler }) {
           value={query}
         />
       </div>
+      <h1 className=" pb-6 pl-4 text-xl text-red">{title}</h1>
 
       {active && results.length && (
         <>
-          <h2 className=" text-white text-lg ml-4">
+          <h2 className=" text-white text-lg ml-4 pb-6">
             {`Found ${results.length} results for "${query}"`}{" "}
           </h2>
           <section className=" grid grid-cols-2 mx-4 gap-4 mb-14 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">

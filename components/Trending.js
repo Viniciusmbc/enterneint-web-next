@@ -5,7 +5,7 @@ export default function Trending({ year, category, rating, title, image }) {
   return (
     <>
       <div className="relative ml-4 mr-2 w-9/12  max-w-md  flex-shrink-0 ">
-        <div className=" flex items-center right-0 absolute bg-darkBlue/50  w-8 h-8 rounded-full z-10">
+        <button className=" flex items-center right-2 absolute bg-darkBlue/50 top-2  w-8 h-8 rounded-full z-10">
           <svg
             className=" mx-auto"
             width="12"
@@ -19,7 +19,7 @@ export default function Trending({ year, category, rating, title, image }) {
               fill="none"
             />
           </svg>
-        </div>
+        </button>
 
         <div className=" bottom-10 left-4 absolute flex items-center z-10">
           <p className="text-white/75 text-xs">{year}</p>

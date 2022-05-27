@@ -3,7 +3,7 @@ import { useState } from "react";
 
 export default function NestedLayout({ children }) {
   return (
-    <main className=" md:flex bg-darkBlue min-h-screen">
+    <main className=" md:flex max-w-screen-xl mx-auto">
       <Navbar />
       {children}
     </main>
