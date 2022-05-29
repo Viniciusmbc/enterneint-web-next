@@ -4,11 +4,6 @@ module.exports = {
     "./components/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {
-      screens: {
-        lg: "1440px",
-      },
-    },
     colors: {
       red: "#FC4747",
       darkBlue: "#10141E",
@@ -19,7 +14,11 @@ module.exports = {
       green: "#00FF00",
       yellow: "#FFFF00",
     },
-    extend: {},
+    extend: {
+      screens: {
+        xl: "1444px",
+      },
+    },
   },
   plugins: [require("@tailwindcss/aspect-ratio")],
 };

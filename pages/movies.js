@@ -9,16 +9,10 @@ import { useEffect, useState } from "react";
 
 // components
 import Cards from "../components/Cards";
-
 import SearchBar from "../components/SearchBar";
 import { getLayout } from "../components/NestedLayout";
-import Title from "../components/Title";
 
-const fetcher = (url) => fetch(url).then((r) => r.json());
-
-export default function Movies() {
-  const { data, error } = useSWR("/api/movies", fetcher);
-
+export default function Movies({ data }) {
   const [searchActive, setSearchActive] = useState(false);
 
   const checkSearchStatus = (status) => {
@@ -63,6 +57,17 @@ export default function Movies() {
       </section>
     </>
   );
+}
+
+export async function getStaticProps() {
+  const res = await fetch("http://localhost:3000/api/movies");
+  const data = await res.json();
+
+  return {
+    props: {
+      data,
+    },
+  };
 }
 
 Movies.getLayout = getLayout;

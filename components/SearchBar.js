@@ -7,36 +7,42 @@ export default function SearchBar({ shows, data, onFocusHandler, title }) {
   const [active, setActive] = useState(false);
   const [results, setResults] = useState([]);
 
-  const onChange = useCallback((event) => {
-    const query = event.target.value;
-    setQuery(query);
+  const onChange = useCallback(
+    (event) => {
+      const query = event.target.value;
+      setQuery(query);
 
-    if (query.length >= 2) {
-      onFocusHandler(true);
-      setActive(true);
-      setResults(
-        data.filter((item) => item.title.toLowerCase().includes(query))
-      );
-    } else {
-      onFocusHandler(false);
-      setResults([]);
-      setActive(false);
-    }
-  }, []);
+      if (query.length >= 2) {
+        onFocusHandler(true);
+        setActive(true);
+        setResults(
+          data.filter((item) => item.title.toLowerCase().includes(query))
+        );
+      } else {
+        onFocusHandler(false);
+        setResults([]);
+        setActive(false);
+      }
+    },
+    [data, onFocusHandler]
+  );
 
   const onFocus = () => {
     window.addEventListener("click", onClick);
   };
 
-  const onClick = useCallback((event) => {
-    if (searchRef.current && !searchRef.current.contains(event.target)) {
-      setActive(false);
-      onFocusHandler(false);
-      setQuery("");
-      setResults([]);
-      window.removeEventListener("click", onClick);
-    }
-  }, []);
+  const onClick = useCallback(
+    (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setActive(false);
+        onFocusHandler(false);
+        setQuery("");
+        setResults([]);
+        window.removeEventListener("click", onClick);
+      }
+    },
+    [onFocusHandler]
+  );
 
   console.log(typeof results.length);
 

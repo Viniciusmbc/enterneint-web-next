@@ -13,10 +13,7 @@ import SearchBar from "../components/SearchBar";
 import Title from "../components/Title";
 import { getLayout } from "../components/NestedLayout";
 
-const fetcher = (url) => fetch(url).then((r) => r.json());
-
-export default function Series() {
-  const { data, error } = useSWR("/api/series", fetcher);
+export default function Series({ data }) {
   const [searchActive, setSearchActive] = useState(false);
 
   const checkSearchStatus = (status) => {
@@ -26,8 +23,6 @@ export default function Series() {
       setSearchActive(false);
     }
   };
-
-  console.log(data, error);
 
   return (
     <>
@@ -62,6 +57,17 @@ export default function Series() {
       </section>
     </>
   );
+}
+
+export async function getStaticProps() {
+  const res = await fetch("http://localhost:3000/api/series");
+  const data = await res.json();
+
+  return {
+    props: {
+      data,
+    },
+  };
 }
 
 Series.getLayout = getLayout;

@@ -10,7 +10,7 @@ export default function Cards({
 }) {
   return (
     <div className=" flex-shrink-0">
-      <div className="relative  h-28 md:h-36 lg:h-44">
+      <div className="relative h-28 md:h-36 lg:h-[174px]">
         <button className=" flex items-center right-2 top-2 absolute bg-darkBlue/50  w-8 h-8 rounded-full z-10 md:right-4 md:top-4">
           {bookmark ? (
             <svg
