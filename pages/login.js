@@ -62,7 +62,7 @@ export default function Login() {
             </button>
             <div className="py-6">
               <p className="text-white">
-                {`Don't have an account?`}
+                {`Dont have an account?`}
                 <Link href="/signup">
                   <a className="text-red"> Sign Up</a>
                 </Link>
