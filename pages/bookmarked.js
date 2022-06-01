@@ -21,9 +21,7 @@ export default function Movies() {
     <>
       <Head></Head>
       <main className=" w-full">
-        <SearchBar shows={"bookmarked shows"} />
-
-        <Title title={"Bookmarked Movies"} />
+        <SearchBar shows={"bookmarked shows"} title={"Bookmarked Movies"} />
 
         <section className=" grid grid-cols-2 mx-4 gap-4 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
           {data &&

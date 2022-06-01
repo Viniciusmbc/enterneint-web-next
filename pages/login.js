@@ -1,29 +1,43 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useRef, useState } from "react";
+
+// import context 
 import { useAuth } from "../context/AuthContext";
 
+
 export default function Login() {
-  const { user, login } = useAuth();
+  // Error state
+  const [error, setError] = useState(null);
+
+  // useAuth from context
+  const { user, signIn } = useAuth();
+
+  // Router
   const router = useRouter();
 
-  const [data, setData] = useState({
-    email: "",
-    password: "",
-  });
+  // UseRef to store the input value 
+  const emailRef = useRef();
+  const passwordRef = useRef();
 
+  // Sign in the user
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    console.log(user);
-    try {
-      await login(data.email, data.password);
+    // Get the email and password from the form
+    const email = emailRef.current.value
+    const password = passwordRef.current.value
+
+    const { error } = await signIn({ email, password });
+
+    if (error) {
+      setError(error);
+    } else {
       router.push("/");
-    } catch (err) {
-      console.log(err);
     }
-    console.log("login:", data.email, data.password);
+    console.log(user);
   };
+  
 
   return (
     <div className=" min-h-screen bg-darkBlue">
@@ -47,15 +61,13 @@ export default function Login() {
               type="email"
               placeholder="Email address"
               className="mt-10 border-b-2 border-greyishBlue bg-semiDarkBlue py-2 text-white"
-              value={data.email}
-              onChange={(e) => setData({ ...data, email: e.target.value })}
+              ref={emailRef}
             />
             <input
               type="password"
               placeholder="Password"
               className="mt-6 border-b-2 border-greyishBlue bg-semiDarkBlue py-2 text-white"
-              value={data.password}
-              onChange={(e) => setData({ ...data, password: e.target.value })}
+              ref={passwordRef}
             />
             <button className="mt-10 rounded-md bg-red py-2" type="submit">
               Login to your account

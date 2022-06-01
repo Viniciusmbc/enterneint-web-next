@@ -1,9 +1,10 @@
+// Components
 import Navbar from "./Navbar";
-import { useState } from "react";
 
 export default function NestedLayout({ children }) {
+
   return (
-    <main className=" md:flex max-w-screen-xl mx-auto">
+     <main className=" md:flex max-w-screen-xl mx-auto">
       <Navbar />
       {children}
     </main>

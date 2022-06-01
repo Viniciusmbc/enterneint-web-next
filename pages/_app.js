@@ -2,10 +2,7 @@
 import "../styles/globals.css";
 
 // Context
-import { AuthContextProvider } from "../context/AuthContext";
-
-// Components
-import ProtectedRoute from "../components/ProtectedRoute";
+import { AuthProvider } from "../context/AuthContext";
 
 // Router
 import { useRouter } from "next/router";
@@ -26,14 +23,8 @@ export default function MyApp({ Component, pageProps }) {
   const router = useRouter();
 
   return getLayout(
-    <AuthContextProvider>
-      {noAuthRequired.includes(router.pathname) ? (
+    <AuthProvider>
         <Component {...pageProps} />
-      ) : (
-        <ProtectedRoute>
-          <Component {...pageProps} />
-        </ProtectedRoute>
-      )}
-    </AuthContextProvider>
+    </AuthProvider>
   );
 }
