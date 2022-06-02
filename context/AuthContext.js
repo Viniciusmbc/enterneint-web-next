@@ -6,42 +6,40 @@ import { supabase } from "../utils/supabaseClient";
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [session, setSession] = useState(null);
   const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
+  const [isLoading, setLoading] = useState(true);
 
+  console.log(token);
   console.log(user);
 
   useEffect(() => {
     // Check active sessions and sets the user
-    const activeSession = supabase.auth.session()
-
-    setSession(activeSession);
-    setUser(session?.user ?? null)
+    const activeSession = supabase.auth.session();
+    if (activeSession?.user.id) {
+      setUser(activeSession.user);
+      setToken(activeSession.access_token);
+    }
+    setLoading(false);
 
     // Listen for changes on auth state (logged in, signed out, etc.)
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      async (event, currentSession) => {
-        setSession(currentSession);
-        setUser(currentSession?.user ?? null)
+
+    supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.user?.id) {
+        setUser(session.user);
+        setToken(session.access_token);
       }
-    )
+      setLoading(false);
+    });
+  }, []);
 
-    return () => {
-      authListener?.unsubscribe()
-    }
-  }, [])
-
-  const value = {
-    signUp: (data) => supabase.auth.signUp(data),
-    signIn: (data) => supabase.auth.signIn(data),
-    signOut: () => supabase.auth.signOut(),
-    user,
-  }
+  // Add functions to context value
+  const signUp = (data) => supabase.auth.signUp(data);
+  const signIn = (data) => supabase.auth.signIn(data);
+  const signOut = () => supabase.auth.signOut();
 
   return (
-    <AuthContext.Provider
-      value={{value, session, user}}
-    >
+    <AuthContext.Provider value={{ signUp, signIn, signOut, token, user }}>
       {children}
     </AuthContext.Provider>
   );
@@ -53,4 +51,4 @@ export const useAuth = () => {
     throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
-}
+};

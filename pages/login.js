@@ -2,9 +2,8 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useRef, useState } from "react";
 
-// import context 
+// import context
 import { useAuth } from "../context/AuthContext";
-
 
 export default function Login() {
   // Error state
@@ -16,28 +15,26 @@ export default function Login() {
   // Router
   const router = useRouter();
 
-  // UseRef to store the input value 
+  // UseRef to store the input value
   const emailRef = useRef();
   const passwordRef = useRef();
+
+  console.log(user);
 
   // Sign in the user
   const handleLogin = async (e) => {
     e.preventDefault();
 
     // Get the email and password from the form
-    const email = emailRef.current.value
-    const password = passwordRef.current.value
+    const email = emailRef.current.value;
+    const password = passwordRef.current.value;
 
     const { error } = await signIn({ email, password });
 
-    if (error) {
-      setError(error);
-    } else {
+    if (!error) {
       router.push("/");
     }
-    console.log(user);
   };
-  
 
   return (
     <div className=" min-h-screen bg-darkBlue">
@@ -53,7 +50,7 @@ export default function Login() {
           </div>
 
           <form
-            onClick={handleLogin}
+            onSubmit={handleLogin}
             className="mx-auto flex flex-col rounded-md bg-semiDarkBlue px-10"
           >
             <label className="mt-6 text-2xl text-white">Login</label>

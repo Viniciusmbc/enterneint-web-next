@@ -11,6 +11,6 @@ module.exports = {
     },
   },
   images: {
-    domains: ["github.com"],
+    domains: ["github.com", "kmzgkstraazrxkyxaejh.supabase.co"],
   },
 };
