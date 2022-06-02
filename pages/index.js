@@ -3,7 +3,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 
 // React
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 
 // Auth Context
 import { useAuth } from "../context/AuthContext";
@@ -16,7 +16,11 @@ import SearchBar from "../components/SearchBar";
 // Layouts
 import { getLayout } from "../components/NestedLayout";
 
+// Supabase
+import { supabase } from "../utils/supabaseClient";
+
 export default function Home({ allshows, trendings }) {
+
   // Router
   const router = useRouter();
 
@@ -34,6 +38,17 @@ export default function Home({ allshows, trendings }) {
       setSearchActive(false);
     }
   };
+
+  // Function to change titles in images cards src
+  const changeImageSrc = (title) => {
+    if(title === "Earth’s Untouched"){
+      const earthsuntouched = "earths-untouched";
+      return earthsuntouched;
+    }
+    const src = title.replace(/([^\w]+|\s+)/g, "-").replace("II", "2").toLowerCase()
+    return src;
+  }
+
 
   return (
     <>
@@ -58,7 +73,7 @@ export default function Home({ allshows, trendings }) {
                       year={year}
                       category={category}
                       rating={rating}
-                      image={thumbnail.trending.large}
+                      image={`https://kmzgkstraazrxkyxaejh.supabase.co/storage/v1/object/public/thumbnails/${changeImageSrc(title)}/trending/large.jpg`}
                     />
                   )
                 )}
@@ -74,7 +89,7 @@ export default function Home({ allshows, trendings }) {
           <section className=" grid grid-cols-2 mx-4 gap-4 mb-14 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
             {allshows.map(
               (
-                { title, year, category, thumbnail, rating, isBookmarked },
+                { title, year, category, rating, isBookmarked },
                 index
               ) => (
                 <Cards
@@ -83,12 +98,7 @@ export default function Home({ allshows, trendings }) {
                   title={title}
                   year={year}
                   category={category}
-                  image={`https://kmzgkstraazrxkyxaejh.supabase.co/storage/v1/object/public/thumbnails/${title
-                    .replace(/([^\w]+|\s+)/g, "-")
-                    .replace(/\-\-+/g, "-")
-                    .replace(/(^-+|-+$)/, "")
-                    .replace("II", "2")
-                    .toLowerCase()}/regular/medium.jpg`}
+                  image={`https://kmzgkstraazrxkyxaejh.supabase.co/storage/v1/object/public/thumbnails/${changeImageSrc(title) }/regular/medium.jpg`}
                   classificao={rating}
                 />
               )
@@ -101,15 +111,19 @@ export default function Home({ allshows, trendings }) {
 }
 
 export async function getStaticProps() {
-  const res = await fetch("http://localhost:3000/api/hello");
-  const data = await res.json();
 
-  const trendings = data.filter((show) => show.isTrending === true);
+  // Get all shows
+ const {data: allshows, error} = await supabase.from("Shows").select();
+  if(error){
+    throw new Error(error);}
+
+ // Get trending shows
+ const {data: trendings} = await supabase.from("Shows").select().filter("isTrending", "eq", true);
 
   return {
     props: {
-      allshows: data,
-      trendings,
+      allshows,
+      trendings
     },
   };
 }

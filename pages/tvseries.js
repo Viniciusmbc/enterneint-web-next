@@ -10,8 +10,12 @@ import { useEffect, useState } from "react";
 // components
 import Cards from "../components/Cards";
 import SearchBar from "../components/SearchBar";
-import Title from "../components/Title";
+
+// layouts
 import { getLayout } from "../components/NestedLayout";
+
+// supabase
+import { supabase } from "../utils/supabaseClient";
 
 export default function Series({ data }) {
   const [searchActive, setSearchActive] = useState(false);
@@ -23,6 +27,16 @@ export default function Series({ data }) {
       setSearchActive(false);
     }
   };
+
+      // Function to change titles in images cards src
+      const changeImageSrc = (title) => {
+        if(title === "Earth’s Untouched"){
+          const earthsuntouched = "earths-untouched";
+          return earthsuntouched;
+        }
+        const src = title?.replace(/([^\w]+|\s+)/g, "-").replace("II", "2").toLowerCase()
+        return src;
+      }
 
   return (
     <>
@@ -47,7 +61,7 @@ export default function Series({ data }) {
                   title={title}
                   year={year}
                   category={category}
-                  image={thumbnail.regular.medium}
+                  image={`https://kmzgkstraazrxkyxaejh.supabase.co/storage/v1/object/public/thumbnails/${changeImageSrc(title)}/regular/medium.jpg`}
                   classificao={rating}
                 />
               )
@@ -60,9 +74,9 @@ export default function Series({ data }) {
 }
 
 export async function getStaticProps() {
-  const res = await fetch("http://localhost:3000/api/series");
-  const data = await res.json();
-
+  // Get trending shows
+  const {data} = await supabase.from("Shows").select().filter("category", "eq", "TV Series");
+  console.log(data)
   return {
     props: {
       data,
