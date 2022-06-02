@@ -27,14 +27,13 @@ export default function Signup() {
     const email = emailRef.current.value;
     const password = passwordRef.current.value;
 
-    const {error} = await signUp({ email, password });
+    const { error } = await signUp({ email, password });
 
     if (error) {
       setError(error);
     } else {
       router.push("/");
     }
-
   };
 
   return (
@@ -73,7 +72,6 @@ export default function Signup() {
               required
               placeholder="Repeat Password"
               className="mt-6 border-b-2 border-greyishBlue bg-semiDarkBlue py-2 text-white"
-
             />
 
             <button className="mt-10 rounded-md bg-red py-2" type="submit">

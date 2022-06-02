@@ -50,6 +50,7 @@ export default function Navbar() {
           </a>
         </Link>
       </div>
+      <div></div>
       <div className=" md:mt-auto">
         <Image
           width={40}
