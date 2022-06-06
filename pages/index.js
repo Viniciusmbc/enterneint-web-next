@@ -25,10 +25,22 @@ export default function Home({ allshows, trendings, bookmarked }) {
     return Shows;
   });
 
-  console.log(shows, allshows);
 
-  const bookmarked = () => {};
+  const ila = bookmarked.map(({ shows_id }) => {
+    return shows_id;
+  }
+  );
 
+// Compare itens from allshows and shows
+  const filteredShows = allshows.filter(({ id }) => {
+    return ila.includes(id); ;
+  } 
+  );
+
+  console.log(ila);
+  console.log(filteredShows);
+  console.log(shows); 
+ 
   // Router
   const router = useRouter();
 
@@ -104,7 +116,7 @@ export default function Home({ allshows, trendings, bookmarked }) {
                 ({ title, year, category, rating, isBookmarked, id }) => (
                   <Cards
                     key={id}
-                    bookmark={isBookmarked}
+                    bookmark={filteredShows.map(({id}) => id != id ? true : false)}
                     title={title}
                     year={year}
                     category={category}
@@ -114,6 +126,7 @@ export default function Home({ allshows, trendings, bookmarked }) {
                     classificao={rating}
                     session={session}
                     id={id}
+                    favorites={shows}
                   />
                 )
               )}
@@ -152,7 +165,7 @@ export async function getServerSideProps({ req, res }) {
   // Get bookmarked shows
   const { data: bookmarked } = await supabase
     .from("userfavoriteshows")
-    .select("shows_id, Shows (*)");
+    .select("shows_id, Shows (*)").eq("user_id", user.id);
 
   return {
     props: {
