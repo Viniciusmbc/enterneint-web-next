@@ -1,5 +1,8 @@
+// Nextjs
 import Link from "next/link";
 import { useRouter } from "next/router";
+
+// React Hooks
 import { useRef, useState } from "react";
 
 // import context
@@ -10,7 +13,7 @@ export default function Login() {
   const [error, setError] = useState(null);
 
   // useAuth from context
-  const { user, signIn } = useAuth();
+  const { session, signIn } = useAuth();
 
   // Router
   const router = useRouter();
@@ -19,7 +22,7 @@ export default function Login() {
   const emailRef = useRef();
   const passwordRef = useRef();
 
-  console.log(user);
+  console.log(session);
 
   // Sign in the user
   const handleLogin = async (e) => {
@@ -29,12 +32,14 @@ export default function Login() {
     const email = emailRef.current.value;
     const password = passwordRef.current.value;
 
-    const { error } = await signIn({ email, password });
+    const { data, error } = await signIn({ email, password });
+    setError(error);
+    console.log(data);
 
-    if (!error) {
-      router.push("/");
-    }
+    data ? router.push("/") : null;
   };
+
+  console.log(session?.user?.aud === "authenticated" ? "true" : "false");
 
   return (
     <div className=" min-h-screen bg-darkBlue">
@@ -59,21 +64,30 @@ export default function Login() {
               placeholder="Email address"
               className="mt-10 border-b-2 border-greyishBlue bg-semiDarkBlue py-2 text-white"
               ref={emailRef}
+              required
             />
             <input
               type="password"
               placeholder="Password"
               className="mt-6 border-b-2 border-greyishBlue bg-semiDarkBlue py-2 text-white"
               ref={passwordRef}
+              required
             />
-            <button className="mt-10 rounded-md bg-red py-2" type="submit">
+            <button
+              className="mt-10 rounded-md bg-red py-2 hover:bg-white"
+              type="submit"
+            >
               Login to your account
             </button>
+            {error?.message && (
+              <div className=" text-red py-6">{error?.message}</div>
+            )}
+
             <div className="py-6">
               <p className="text-white">
                 {`Dont have an account?`}
                 <Link href="/signup">
-                  <a className="text-red"> Sign Up</a>
+                  <a className="text-red "> Sign Up</a>
                 </Link>
               </p>{" "}
             </div>

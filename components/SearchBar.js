@@ -69,7 +69,7 @@ export default function SearchBar({ shows, data, onFocusHandler, title }) {
           value={query}
         />
       </div>
-      <h1 className=" pb-6 pl-4 text-xl text-red">{title}</h1>
+      <h1 className=" pb-6 pl-4 text-xl text-white">{title}</h1>
 
       {active && results.length && (
         <>

@@ -30,7 +30,7 @@ export default function Signup() {
     const { error } = await signUp({ email, password });
 
     if (error) {
-      setError(error);
+      setError(error.message);
     } else {
       router.push("/");
     }
@@ -74,7 +74,10 @@ export default function Signup() {
               className="mt-6 border-b-2 border-greyishBlue bg-semiDarkBlue py-2 text-white"
             />
 
-            <button className="mt-10 rounded-md bg-red py-2" type="submit">
+            <button
+              className="mt-10 rounded-md bg-red hover:bg-white py-2"
+              type="submit"
+            >
               Create an account
             </button>
             {error && <p className="text-red text-sm mt-4">{error}</p>}

@@ -17,8 +17,10 @@ import { getLayout } from "../components/NestedLayout";
 // supabase
 import { supabase } from "../utils/supabaseClient";
 
-export default function Series({ data }) {
+export default function Series({ data, user }) {
   const [searchActive, setSearchActive] = useState(false);
+
+  console.log(user);
 
   const checkSearchStatus = (status) => {
     if (status) {
@@ -28,15 +30,18 @@ export default function Series({ data }) {
     }
   };
 
-      // Function to change titles in images cards src
-      const changeImageSrc = (title) => {
-        if(title === "Earth’s Untouched"){
-          const earthsuntouched = "earths-untouched";
-          return earthsuntouched;
-        }
-        const src = title?.replace(/([^\w]+|\s+)/g, "-").replace("II", "2").toLowerCase()
-        return src;
-      }
+  // Function to change titles in images cards src
+  const changeImageSrc = (title) => {
+    if (title === "Earth’s Untouched") {
+      const earthsuntouched = "earths-untouched";
+      return earthsuntouched;
+    }
+    const src = title
+      ?.replace(/([^\w]+|\s+)/g, "-")
+      .replace("II", "2")
+      .toLowerCase();
+    return src;
+  };
 
   return (
     <>
@@ -61,7 +66,9 @@ export default function Series({ data }) {
                   title={title}
                   year={year}
                   category={category}
-                  image={`https://kmzgkstraazrxkyxaejh.supabase.co/storage/v1/object/public/thumbnails/${changeImageSrc(title)}/regular/medium.jpg`}
+                  image={`https://kmzgkstraazrxkyxaejh.supabase.co/storage/v1/object/public/thumbnails/${changeImageSrc(
+                    title
+                  )}/regular/medium.jpg`}
                   classificao={rating}
                 />
               )
@@ -73,13 +80,26 @@ export default function Series({ data }) {
   );
 }
 
-export async function getStaticProps() {
+export async function getStaticProps({ req, res }) {
+  // Get user by cookie
+  const { user } = await supabase.auth.api.getUserByCookie(req);
+
+  // If user not authenticaded, redirect
+  if (!user) {
+    console.log("Please login.");
+    return { props: {}, redirect: { destination: "/login", permanent: false } };
+  }
+
   // Get trending shows
-  const {data} = await supabase.from("Shows").select().filter("category", "eq", "TV Series");
-  console.log(data)
+  const { data } = await supabase
+    .from("Shows")
+    .select()
+    .filter("category", "eq", "TV Series");
+
   return {
     props: {
       data,
+      user,
     },
   };
 }

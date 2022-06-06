@@ -1,17 +1,35 @@
+// Nextjs
 import Image from "next/image";
 
+// supabase
+import { supabase } from "../utils/supabaseClient";
+
 export default function Cards({
+  id,
+  title,
   year,
   category,
-  title,
   image,
   bookmark,
   classificao,
+  session,
 }) {
+  // Add bookmarked to user
+  const insertBookmarked = async (id) => {
+    const favorites = await supabase
+      .from("userfavoriteshows")
+      .insert([{ user_id: session.user.id, shows_id: id }]);
+
+    console.log(favorites);
+  };
+
   return (
     <div className=" flex-shrink-0">
       <div className="relative h-28 md:h-36 lg:h-[174px]">
-        <button className=" flex items-center right-2 top-2 absolute bg-darkBlue/50  w-8 h-8 rounded-full z-10 md:right-4 md:top-4">
+        <button
+          onClick={() => insertBookmarked(id)}
+          className=" flex items-center right-2 top-2 absolute bg-darkBlue/50  w-8 h-8 rounded-full z-10 md:right-4 md:top-4"
+        >
           {bookmark ? (
             <svg
               className=" mx-auto"

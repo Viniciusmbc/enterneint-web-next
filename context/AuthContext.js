@@ -6,31 +6,30 @@ import { supabase } from "../utils/supabaseClient";
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
-  const [isLoading, setLoading] = useState(true);
-
-  console.log(token);
-  console.log(user);
+  const [session, setSession] = useState(null);
 
   useEffect(() => {
     // Check active sessions and sets the user
-    const activeSession = supabase.auth.session();
-    if (activeSession?.user.id) {
-      setUser(activeSession.user);
-      setToken(activeSession.access_token);
-    }
-    setLoading(false);
+    const session = supabase.auth.session();
+    setSession(session);
 
     // Listen for changes on auth state (logged in, signed out, etc.)
 
-    supabase.auth.onAuthStateChange((event, session) => {
-      if (session?.user?.id) {
-        setUser(session.user);
-        setToken(session.access_token);
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        setSession(session);
+        await fetch("/api/auth", {
+          method: "Post",
+          body: JSON.stringify({ event, session }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }).then((res) => res.json());
       }
-      setLoading(false);
-    });
+    );
+    return () => {
+      authListener?.unsubscribe();
+    };
   }, []);
 
   // Add functions to context value
@@ -39,7 +38,7 @@ export const AuthProvider = ({ children }) => {
   const signOut = () => supabase.auth.signOut();
 
   return (
-    <AuthContext.Provider value={{ signUp, signIn, signOut, token, user }}>
+    <AuthContext.Provider value={{ signUp, signIn, signOut, session }}>
       {children}
     </AuthContext.Provider>
   );
