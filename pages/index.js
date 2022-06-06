@@ -19,18 +19,28 @@ import { getLayout } from "../components/NestedLayout";
 // Supabase
 import { supabase } from "../utils/supabaseClient";
 
-export default function Home({ allshows, trendings }) {
+export default function Home({ allshows, trendings, bookmarked }) {
+  // Get bookmarked shows
+  const shows = bookmarked.map(({ Shows }) => {
+    return Shows;
+  });
+
+  console.log(shows, allshows);
+
+  const bookmarked = () => {};
 
   // Router
   const router = useRouter();
 
   // Auth
-  const { user, signOut } = useAuth();
+  const { session, signOut } = useAuth();
+
+  console.log(session);
 
   // Search state
   const [searchActive, setSearchActive] = useState(false);
 
-  // If search is active, show the data
+  // If search state is active, show the data
   const checkSearchStatus = (status) => {
     if (status) {
       setSearchActive(true);
@@ -41,14 +51,16 @@ export default function Home({ allshows, trendings }) {
 
   // Function to change titles in images cards src
   const changeImageSrc = (title) => {
-    if(title === "Earth’s Untouched"){
+    if (title === "Earth’s Untouched") {
       const earthsuntouched = "earths-untouched";
       return earthsuntouched;
     }
-    const src = title.replace(/([^\w]+|\s+)/g, "-").replace("II", "2").toLowerCase()
+    const src = title
+      .replace(/([^\w]+|\s+)/g, "-")
+      .replace("II", "2")
+      .toLowerCase();
     return src;
-  }
-
+  };
 
   return (
     <>
@@ -65,18 +77,18 @@ export default function Home({ allshows, trendings }) {
             <h1 className=" pl-4 text-xl text-white mb-4">Trending</h1>
             <div className="flex  w-full overflow-x-auto">
               {trendings &&
-                trendings.map(
-                  ({ title, year, category, thumbnail, rating }, index) => (
-                    <Trending
-                      key={index}
-                      title={title}
-                      year={year}
-                      category={category}
-                      rating={rating}
-                      image={`https://kmzgkstraazrxkyxaejh.supabase.co/storage/v1/object/public/thumbnails/${changeImageSrc(title)}/trending/large.jpg`}
-                    />
-                  )
-                )}
+                trendings.map(({ title, year, category, rating }, index) => (
+                  <Trending
+                    key={index}
+                    title={title}
+                    year={year}
+                    category={category}
+                    rating={rating}
+                    image={`https://kmzgkstraazrxkyxaejh.supabase.co/storage/v1/object/public/thumbnails/${changeImageSrc(
+                      title
+                    )}/trending/large.jpg`}
+                  />
+                ))}
             </div>
 
             <h2 className="text-white text-xl my-6 ml-4">
@@ -87,22 +99,24 @@ export default function Home({ allshows, trendings }) {
 
         {!searchActive && (
           <section className=" grid grid-cols-2 mx-4 gap-4 mb-14 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
-            {allshows.map(
-              (
-                { title, year, category, rating, isBookmarked },
-                index
-              ) => (
-                <Cards
-                  key={index}
-                  bookmark={isBookmarked}
-                  title={title}
-                  year={year}
-                  category={category}
-                  image={`https://kmzgkstraazrxkyxaejh.supabase.co/storage/v1/object/public/thumbnails/${changeImageSrc(title) }/regular/medium.jpg`}
-                  classificao={rating}
-                />
-              )
-            )}
+            {allshows &&
+              allshows.map(
+                ({ title, year, category, rating, isBookmarked, id }) => (
+                  <Cards
+                    key={id}
+                    bookmark={isBookmarked}
+                    title={title}
+                    year={year}
+                    category={category}
+                    image={`https://kmzgkstraazrxkyxaejh.supabase.co/storage/v1/object/public/thumbnails/${changeImageSrc(
+                      title
+                    )}/regular/medium.jpg`}
+                    classificao={rating}
+                    session={session}
+                    id={id}
+                  />
+                )
+              )}
           </section>
         )}
       </section>
@@ -110,20 +124,42 @@ export default function Home({ allshows, trendings }) {
   );
 }
 
-export async function getStaticProps() {
+export async function getServerSideProps({ req, res }) {
+  // Get user by cookie
+  const { user } = await supabase.auth.api.getUserByCookie(req);
+
+  // If user not authenticaded, redirect to login page
+  if (!user) {
+    console.log("Please login.");
+    return { props: {}, redirect: { destination: "/login", permanent: false } };
+  }
+
+  console.log(user);
 
   // Get all shows
- const {data: allshows, error} = await supabase.from("Shows").select();
-  if(error){
-    throw new Error(error);}
+  const { data: allshows, error } = await supabase.from("Shows").select();
 
- // Get trending shows
- const {data: trendings} = await supabase.from("Shows").select().filter("isTrending", "eq", true);
+  if (error) {
+    throw new Error(error);
+  }
+
+  // Get trending shows
+  const { data: trendings } = await supabase
+    .from("Shows")
+    .select()
+    .filter("isTrending", "eq", true);
+
+  // Get bookmarked shows
+  const { data: bookmarked } = await supabase
+    .from("userfavoriteshows")
+    .select("shows_id, Shows (*)");
 
   return {
     props: {
+      user,
       allshows,
-      trendings
+      trendings,
+      bookmarked,
     },
   };
 }

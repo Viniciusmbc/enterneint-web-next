@@ -1,56 +1,84 @@
 // Nextjs
 import Head from "next/head";
 
+// React hooks
+import { useState } from "react";
+
 // Components
 import { getLayout } from "../components/NestedLayout";
 import SearchBar from "../components/SearchBar";
 import Cards from "../components/Cards";
+import Title from "../components/Title";
 
 // Supabase
 import { supabase } from "../utils/supabaseClient";
 
 export default function Bookmarked({ data }) {
- 
-    // Function to change titles in images cards src
-    const changeImageSrc = (title) => {
-      if(title === "Earth’s Untouched"){
-        const earthsuntouched = "earths-untouched";
-        return earthsuntouched;
-      }
-      const src = title.replace(/([^\w]+|\s+)/g, "-").replace("II", "2").toLowerCase()
-      return src;
+  // Get bookmarked shows
+  const shows = data.map(({ Shows }) => {
+    return Shows;
+  });
+
+  // Search state
+  const [searchActive, setSearchActive] = useState(false);
+
+  // If search state is active, show the data
+  const checkSearchStatus = (status) => {
+    if (status) {
+      setSearchActive(true);
+    } else {
+      setSearchActive(false);
     }
-  
-  console.log(data);
+  };
+
+  // Function to change titles in images cards src
+  const changeImageSrc = (title) => {
+    if (title === "Earth’s Untouched") {
+      const earthsuntouched = "earths-untouched";
+      return earthsuntouched;
+    }
+    const src = title
+      .replace(/([^\w]+|\s+)/g, "-")
+      .replace("II", "2")
+      .toLowerCase();
+    return src;
+  };
 
   return (
     <>
       <Head></Head>
       <main className=" w-full">
-        <SearchBar shows={"bookmarked shows"} title={"Bookmarked Movies"} />
+        <SearchBar
+          shows={"bookmarked shows"}
+          data={data}
+          onFocusHandler={(status) => checkSearchStatus(status)}
+          title={"Bookmarked Shows"}
+        />
 
         <section className=" grid grid-cols-2 mx-4 gap-4 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
-          {data &&
-            data.map(
-              (
-                { title, year, category, thumbnail, rating, isBookmarked },
-                index
-              ) => (
+          {shows &&
+            shows.map(
+              ({ title, year, category, rating, isBookmarked }, index) => (
                 <Cards
                   key={index}
                   bookmark={isBookmarked}
                   title={title}
                   year={year}
                   category={category}
-                  image={`https://kmzgkstraazrxkyxaejh.supabase.co/storage/v1/object/public/thumbnails/${changeImageSrc(title)}/regular/medium.jpg`}
+                  image={`https://kmzgkstraazrxkyxaejh.supabase.co/storage/v1/object/public/thumbnails/${changeImageSrc(
+                    title
+                  )}/regular/medium.jpg`}
                   classificao={rating}
                 />
               )
             )}
         </section>
+
+        <Title title={"Bookmarked TV Series"} />
+
         <section className=" grid grid-cols-2 mx-4 gap-4 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
-          {data &&
-            data.map(
+          {shows &&
+            shows.map(
               (
                 { title, year, category, thumbnail, rating, isBookmarked },
                 index
@@ -61,7 +89,9 @@ export default function Bookmarked({ data }) {
                   title={title}
                   year={year}
                   category={category}
-                  image={`https://kmzgkstraazrxkyxaejh.supabase.co/storage/v1/object/public/thumbnails/${changeImageSrc(title)}/regular/medium.jpg`}
+                  image={`https://kmzgkstraazrxkyxaejh.supabase.co/storage/v1/object/public/thumbnails/${changeImageSrc(
+                    title
+                  )}/regular/medium.jpg`}
                   classificao={rating}
                 />
               )
@@ -74,14 +104,25 @@ export default function Bookmarked({ data }) {
 
 Bookmarked.getLayout = getLayout;
 
-export async function getStaticProps() {
+export async function getServerSideProps({ req, res }) {
+  // Get user by cookie
+  const { user } = await supabase.auth.api.getUserByCookie(req);
 
-// Get Bookmarked shows
-const {data} = await supabase.from("Shows").select().filter("isBookmarked", "eq", true);
-  
+  // If user not authenticaded, redirect
+  if (!user) {
+    console.log("Please login.");
+    return { props: {}, redirect: { destination: "/login", permanent: false } };
+  }
+
+  // Get bookmarked movies
+  const { data } = await supabase
+    .from("userfavoriteshows")
+    .select("shows_id, Shows (*)");
+
   return {
     props: {
       data,
+      user,
     },
   };
 }
