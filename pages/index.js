@@ -19,35 +19,42 @@ import { getLayout } from "../components/NestedLayout";
 // Supabase
 import { supabase } from "../utils/supabaseClient";
 
-export default function Home({ allshows, trendings, bookmarked }) {
-  // Get bookmarked shows
-  const shows = bookmarked.map(({ Shows }) => {
-    return Shows;
-  });
-
-
-  const ila = bookmarked.map(({ shows_id }) => {
-    return shows_id;
-  }
-  );
-
-// Compare itens from allshows and shows
-  const filteredShows = allshows.filter(({ id }) => {
-    return ila.includes(id); ;
-  } 
-  );
-
-  console.log(ila);
-  console.log(filteredShows);
-  console.log(shows); 
- 
-  // Router
-  const router = useRouter();
-
+export default function Home({ allshows, trendings }) {
   // Auth
   const { session, signOut } = useAuth();
 
-  console.log(session);
+  console.log(session.user.id);
+
+  // Get bookmarked shows
+  const [bookmarked, setBookmarked] = useState([]);
+
+  useEffect(() => {
+    const getBookmarked = async () => {
+      const { data, error } = await supabase
+        .from("userfavoriteshows")
+        .select("shows_id, Shows (*)")
+        .eq("user_id", session.user.id);
+      setBookmarked(data);
+    };
+
+    getBookmarked();
+
+    const bookmarkedListener = supabase
+      .from("userfavoriteshows")
+      .on("*", (payload) => {
+        console.log(payload.new);
+      })
+      .subscribe();
+
+    console.log(bookmarked);
+
+    return () => {
+      bookmarkedListener.unsubscribe();
+    };
+  }, []);
+
+  // Router
+  const router = useRouter();
 
   // Search state
   const [searchActive, setSearchActive] = useState(false);
@@ -116,7 +123,7 @@ export default function Home({ allshows, trendings, bookmarked }) {
                 ({ title, year, category, rating, isBookmarked, id }) => (
                   <Cards
                     key={id}
-                    bookmark={filteredShows.map(({id}) => id != id ? true : false)}
+                    bookmark={isBookmarked}
                     title={title}
                     year={year}
                     category={category}
@@ -126,7 +133,6 @@ export default function Home({ allshows, trendings, bookmarked }) {
                     classificao={rating}
                     session={session}
                     id={id}
-                    favorites={shows}
                   />
                 )
               )}
@@ -165,7 +171,8 @@ export async function getServerSideProps({ req, res }) {
   // Get bookmarked shows
   const { data: bookmarked } = await supabase
     .from("userfavoriteshows")
-    .select("shows_id, Shows (*)").eq("user_id", user.id);
+    .select("shows_id, Shows (*)")
+    .eq("user_id", user.id);
 
   return {
     props: {

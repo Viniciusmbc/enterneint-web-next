@@ -14,32 +14,33 @@ export default function Cards({
   classificao,
   session,
   favorites,
-  
 }) {
- 
   // Add bookmarked to user
   const insertBookmarked = async (id) => {
-
-    const {data,error } = await supabase.from("userfavoriteshows").select().eq("user_id", session.user.id);
+    const { data, error } = await supabase
+      .from("userfavoriteshows")
+      .select()
+      .eq("user_id", session.user.id);
 
     const bookmarked = data.map((item) => item.shows_id);
     console.log(bookmarked);
-  
+
     if (bookmarked.includes(id)) {
-      console.log( `${id} is allready bookmarked`);
-      const updateData = await supabase.from("userfavoriteshows").delete().eq("user_id", session.user.id).eq("shows_id", id);
+      console.log(`${id} is allready bookmarked`);
+      const updateData = await supabase
+        .from("userfavoriteshows")
+        .delete()
+        .eq("user_id", session.user.id)
+        .eq("shows_id", id);
       return updateData;
     } else {
-      await supabase
-        .from("userfavoriteshows")
-        .insert({
-          user_id: session.user.id,
-          shows_id: id,
-          isBookmarked: true,
-        });}         
+      await supabase.from("userfavoriteshows").insert({
+        user_id: session.user.id,
+        shows_id: id,
+        isBookmarked: true,
+      });
+    }
   };
-
-
 
   return (
     <div className=" flex-shrink-0">
@@ -48,9 +49,8 @@ export default function Cards({
           onClick={() => insertBookmarked(id)}
           className=" flex items-center right-2 top-2 absolute bg-darkBlue/50  w-8 h-8 rounded-full z-10 md:right-4 md:top-4"
         >
-          {bookmark  ?  (
+          {bookmark ? (
             <svg
-             
               className=" mx-auto"
               width="12"
               height="14"
@@ -60,7 +60,7 @@ export default function Cards({
                 d="m10.518.75.399 12.214-5.084-4.24-4.535 4.426L.75 1.036l9.768-.285Z"
                 stroke="#FFF"
                 strokeWidth="1.5"
-                fill= "#FFF"
+                fill="#FFF"
               />
             </svg>
           ) : (
