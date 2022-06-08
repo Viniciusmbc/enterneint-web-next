@@ -19,11 +19,11 @@ import { getLayout } from "../components/NestedLayout";
 // Supabase
 import { supabase } from "../utils/supabaseClient";
 
-export default function Home({ allshows, trendings }) {
+export default function Home({ allshows, trendings, user }) {
   // Auth
   const { session, signOut } = useAuth();
 
-  console.log(session.user.id);
+  console.log(user);
 
   // Get bookmarked shows
   const [bookmarked, setBookmarked] = useState([]);
@@ -33,25 +33,28 @@ export default function Home({ allshows, trendings }) {
       const { data, error } = await supabase
         .from("userfavoriteshows")
         .select("shows_id, Shows (*)")
-        .eq("user_id", session.user.id);
+        .eq("user_id", user.id);
       setBookmarked(data);
     };
 
     getBookmarked();
+  }, []);
 
+  useEffect(() => {
     const bookmarkedListener = supabase
       .from("userfavoriteshows")
       .on("*", (payload) => {
-        console.log(payload.new);
+        const bookmarkeds = payload.new;
+        setBookmarked((prev) => [...prev, bookmarkeds]);
       })
       .subscribe();
-
-    console.log(bookmarked);
 
     return () => {
       bookmarkedListener.unsubscribe();
     };
   }, []);
+
+  console.log(bookmarked);
 
   // Router
   const router = useRouter();
@@ -80,6 +83,10 @@ export default function Home({ allshows, trendings }) {
       .toLowerCase();
     return src;
   };
+
+  const allshowsid = allshows.map((show) => show.id);
+
+  console.log(bookmarked.includes(allshowsid[3]));
 
   return (
     <>

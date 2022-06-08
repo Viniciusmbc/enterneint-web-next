@@ -80,7 +80,7 @@ export default function Series({ data, user }) {
   );
 }
 
-export async function getStaticProps({ req, res }) {
+export async function getServerSideProps({ req, res }) {
   // Get user by cookie
   const { user } = await supabase.auth.api.getUserByCookie(req);
 
