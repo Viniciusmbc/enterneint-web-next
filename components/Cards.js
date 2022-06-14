@@ -13,7 +13,6 @@ export default function Cards({
   bookmark,
   classificao,
   session,
-  favorites,
 }) {
   // Add bookmarked to user
   const insertBookmarked = async (id) => {

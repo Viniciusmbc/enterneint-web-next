@@ -19,46 +19,36 @@ import { getLayout } from "../components/NestedLayout";
 // Supabase
 import { supabase } from "../utils/supabaseClient";
 
-export default function Home({ allshows, trendings, user }) {
+// SWR
+import useSWR from "swr";
+
+const fetcher = (url) =>
+  fetch(url, { method: "GET" }).then((res) => res.json());
+
+export default function Home({ trendings, user }) {
+  // All the movies and tv series
+  const { data: allshows, error } = useSWR("/api/shows", fetcher);
+
+  // All the bookmarked movies and tv series
+  const { data: bookmarked, error: errorBookmarked } = useSWR(
+    "/api/bookmarked",
+    fetcher
+  );
+
   // Auth
   const { session, signOut } = useAuth();
-
   console.log(user);
 
-  // Get bookmarked shows
-  const [bookmarked, setBookmarked] = useState([]);
+  console.log(allshows);
 
-  useEffect(() => {
-    const getBookmarked = async () => {
-      const { data, error } = await supabase
-        .from("userfavoriteshows")
-        .select("shows_id, Shows (*)")
-        .eq("user_id", user.id);
-      setBookmarked(data);
-    };
+  const addBookmark = async (id) => {
+    const bookmarked = bookmarked.map((item) => item.shows_id);
+    console.log(bookmarked);
 
-    getBookmarked();
-  }, []);
-
-  useEffect(() => {
-    const bookmarkedListener = supabase
-      .from("userfavoriteshows")
-      .on("*", (payload) => {
-        const bookmarkeds = payload.new;
-        setBookmarked((prev) => [...prev, bookmarkeds]);
-      })
-      .subscribe();
-
-    return () => {
-      bookmarkedListener.unsubscribe();
-    };
-  }, []);
+    console.log(`${id} is allready bookmarked`);
+  };
 
   console.log(bookmarked);
-
-  // Router
-  const router = useRouter();
-
   // Search state
   const [searchActive, setSearchActive] = useState(false);
 
@@ -84,9 +74,7 @@ export default function Home({ allshows, trendings, user }) {
     return src;
   };
 
-  const allshowsid = allshows.map((show) => show.id);
-
-  console.log(bookmarked.includes(allshowsid[3]));
+  // If bookmarked title is in the allshows array, return true else false
 
   return (
     <>
@@ -126,11 +114,11 @@ export default function Home({ allshows, trendings, user }) {
         {!searchActive && (
           <section className=" grid grid-cols-2 mx-4 gap-4 mb-14 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
             {allshows &&
-              allshows.map(
-                ({ title, year, category, rating, isBookmarked, id }) => (
+              allshows?.map(
+                ({ id, title, year, category, rating, insertBookmarked }) => (
                   <Cards
                     key={id}
-                    bookmark={isBookmarked}
+                    insertBookmarked={insertBookmarked}
                     title={title}
                     year={year}
                     category={category}
