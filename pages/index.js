@@ -2,7 +2,7 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
 
-// React
+// React Hooks
 import { useEffect, useState } from "react";
 
 // Auth Context
@@ -26,31 +26,49 @@ const fetcher = (url) =>
   fetch(url, { method: "GET" }).then((res) => res.json());
 
 export default function Home({ trendings, user }) {
-  // All the movies and tv series
+  // Fetch data: all movies and tv series
   const { data: allshows, error } = useSWR("/api/shows", fetcher);
 
-  // All the bookmarked movies and tv series
-  const { data: bookmarked, error: errorBookmarked } = useSWR(
-    "/api/bookmarked",
-    fetcher
-  );
+  // Store the Bookmarkeds shows in a state
+  const [bookmarkedShows, setBookmarkedShows] = useState([]);
+
+  // Search state
+  const [searchActive, setSearchActive] = useState(false);
 
   // Auth
   const { session, signOut } = useAuth();
   console.log(user);
 
-  console.log(allshows);
+  console.log(bookmarkedShows);
 
-  const addBookmark = async (id) => {
-    const bookmarked = bookmarked.map((item) => item.shows_id);
-    console.log(bookmarked);
+  const idAllshows = allshows?.map((item) => item.id);
+  console.log(idAllshows);
 
-    console.log(`${id} is allready bookmarked`);
-  };
+  // If the user is logged in, get the user's bookmarked shows
+  useEffect(() => {
+    const getBookmarkedShowsID = async () => {
+      const { data, error } = await supabase
+        .from("userfavoriteshows")
+        .select()
+        .eq("user_id", session.user.id);
+      if (error) {
+        console.log(error);
+      } else {
+        const bookmarkedShowsId = data?.map((item) => item.shows_id);
+        setBookmarkedShows(bookmarkedShowsId);
+        console.log(bookmarkedShowsId);
+      }
+    };
 
-  console.log(bookmarked);
-  // Search state
-  const [searchActive, setSearchActive] = useState(false);
+    if (session) {
+      console.log(session.user.id);
+      getBookmarkedShowsID();
+    }
+  }, [session]);
+
+  const isBookmarked = idAllshows.map((item) => bookmarkedShows.includes(item));
+
+  console.log(isBookmarked);
 
   // If search state is active, show the data
   const checkSearchStatus = (status) => {
@@ -73,8 +91,6 @@ export default function Home({ trendings, user }) {
       .toLowerCase();
     return src;
   };
-
-  // If bookmarked title is in the allshows array, return true else false
 
   return (
     <>
@@ -114,23 +130,21 @@ export default function Home({ trendings, user }) {
         {!searchActive && (
           <section className=" grid grid-cols-2 mx-4 gap-4 mb-14 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
             {allshows &&
-              allshows?.map(
-                ({ id, title, year, category, rating, insertBookmarked }) => (
-                  <Cards
-                    key={id}
-                    insertBookmarked={insertBookmarked}
-                    title={title}
-                    year={year}
-                    category={category}
-                    image={`https://kmzgkstraazrxkyxaejh.supabase.co/storage/v1/object/public/thumbnails/${changeImageSrc(
-                      title
-                    )}/regular/medium.jpg`}
-                    classificao={rating}
-                    session={session}
-                    id={id}
-                  />
-                )
-              )}
+              allshows?.map(({ id, title, year, category, rating }) => (
+                <Cards
+                  key={id}
+                  title={title}
+                  year={year}
+                  category={category}
+                  image={`https://kmzgkstraazrxkyxaejh.supabase.co/storage/v1/object/public/thumbnails/${changeImageSrc(
+                    title
+                  )}/regular/medium.jpg`}
+                  classificao={rating}
+                  session={session}
+                  id={id}
+                  isBookmarked={bookmarkedShows}
+                />
+              ))}
           </section>
         )}
       </section>

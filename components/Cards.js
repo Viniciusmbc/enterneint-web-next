@@ -1,6 +1,9 @@
 // Nextjs
 import Image from "next/image";
 
+// React Hooks
+import { useEffect, useState } from "react";
+
 // supabase
 import { supabase } from "../utils/supabaseClient";
 
@@ -11,33 +14,49 @@ export default function Cards({
   category,
   image,
   bookmark,
+  bookmarkedShows,
   classificao,
   session,
 }) {
+  // Store the Bookmarkeds shows in a state
+  const [bookmarkedShowsId, setBookmarkedShowsId] = useState(bookmarkedShows);
+
   // Add bookmarked to user
   const insertBookmarked = async (id) => {
-    const { data, error } = await supabase
-      .from("userfavoriteshows")
-      .select()
-      .eq("user_id", session.user.id);
+    // Get all the bookmarked shows
+    const getBookmarkedShows = async () => {
+      const { data, error } = await supabase
+        .from("userfavoriteshows")
+        .select()
+        .eq("user_id", session.user.id);
+      if (error) {
+        console.log(error);
+      } else {
+        const bookmarkedShowsId = data?.map((item) => item.shows_id);
+        setBookmarkedShowsId(bookmarkedShowsId);
+        console.log(bookmarkedShowsId);
+      }
+    };
 
-    const bookmarked = data.map((item) => item.shows_id);
-    console.log(bookmarked);
+    getBookmarkedShows();
 
-    if (bookmarked.includes(id)) {
-      console.log(`${id} is allready bookmarked`);
+    if (bookmarkedShowsId?.includes(id)) {
       const updateData = await supabase
         .from("userfavoriteshows")
         .delete()
         .eq("user_id", session.user.id)
         .eq("shows_id", id);
-      return updateData;
+      console.log(`the show nº ${id} is removed from your bookmarks`);
+      getBookmarkedShows();
+      console.log(bookmarkedShowsId);
     } else {
-      await supabase.from("userfavoriteshows").insert({
+      const newData = await supabase.from("userfavoriteshows").insert({
         user_id: session.user.id,
         shows_id: id,
-        isBookmarked: true,
       });
+      getBookmarkedShows();
+      console.log(bookmarkedShowsId);
+      console.log(`the show nº ${id} is added to your bookmarks`);
     }
   };
 
