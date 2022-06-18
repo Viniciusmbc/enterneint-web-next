@@ -7,122 +7,98 @@ import { useEffect, useState } from "react";
 // supabase
 import { supabase } from "../utils/supabaseClient";
 
-// SWR
-import useSWR, { useSWRConfig } from "swr";
-
-const fetcher = (url) =>
-  fetch(url, {
-    method: "GET",
-    headers: {
-      apikey: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imttemdrc3RyYWF6cnhreXhhZWpoIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTQwNDAwMjksImV4cCI6MTk2OTYxNjAyOX0.-_2tZI3HYJRFQ81SXp4FZXnBRcHO6gFFuLkpfAyAu1I`,
-      Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imttemdrc3RyYWF6cnhreXhhZWpoIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTQwNDAwMjksImV4cCI6MTk2OTYxNjAyOX0.-_2tZI3HYJRFQ81SXp4FZXnBRcHO6gFFuLkpfAyAu1I`,
-    },
-  }).then((res) => res.json());
-
 export default function Cards({
   id,
   title,
   year,
   category,
   image,
-  bookmark,
-  bookmarkedShows,
   classificao,
   session,
 }) {
-  // SWR
-  const { mutate } = useSWRConfig();
+  const [bookmarkedShowsId, setBookmarkedShowsId] = useState([]);
+  const [bookmark, setBookmark] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Fetch data: all bookmarked shows
-  const { data: bookmarkedshows, error: bookmarkedError } = useSWR(
-    `https://kmzgkstraazrxkyxaejh.supabase.co/rest/v1/userfavoriteshows?select=*&user_id=eq.${session?.user?.id}`,
-    fetcher
-  );
-
-  // Update the bookmarked shows if the clicked show is bookmarked
   useEffect(() => {
-    if (bookmarkedshows) {
-      mutate(
-        `https://kmzgkstraazrxkyxaejh.supabase.co/rest/v1/userfavoriteshows?select=*&user_id=eq.${session?.user?.id}`,
-        bookmarkedshows,
-        false
-      );
-    }
-  }, [bookmarkedshows]);
-
-  console.log(session);
-
-  const bookmarkedShowsId = bookmarkedshows?.map((show) => show.shows_id);
-
-  console.log(bookmarkedShowsId);
-
-  // If user click on the bookmark button, add the show to the user's bookmarked shows
-  const insertBookmarked = async (id) => {
-    if (bookmarkedShowsId?.includes(id)) {
-      const updateData = await supabase
-        .from("userfavoriteshows")
-        .delete()
-        .eq("user_id", session.user.id)
-        .eq("shows_id", id);
-      console.log(updateData);
-      console.log(`updateData: ${updateData}, id: ${id}`);
-    } else {
-      const updateData = await supabase.from("userfavoriteshows").insert({
-        user_id: session?.user?.id,
-        shows_id: id,
-      });
-      console.log(updateData);
-      console.log(`updateData: ${updateData}, id: ${id}`);
-    }
-  };
-
-  /*
-    // Get  the bookmarked shows
-    const getBookmarkedShows = async () => {
+    setIsLoading(true);
+    const getData = async () => {
       const { data, error } = await supabase
         .from("userfavoriteshows")
-        .select()
-        .eq("user_id", session.user.id);
+        .select("*")
+        .eq("user_id", session?.user.id);
       if (error) {
-        console.log(error);
+        console.log(`Error: ${error}`);
       } else {
-        const bookmarkedShowsId = data?.map((item) => item.shows_id);
-        setBookmarkedShowsId(bookmarkedShowsId);
+        const id = data.map((item) => item.shows_id);
+        setBookmarkedShowsId(id);
       }
     };
+    getData();
+    setIsLoading(false);
+  }, [session]);
 
+  console.log(`bookmarkedShowsId ${bookmarkedShowsId}`);
+  console.log(`user: ${session?.user.id ?? "no user"}`);
 
-    getBookmarkedShows();
-
-    if (bookmarkedShowsId?.includes(id)) {
-      const updateData = await supabase
-        .from("userfavoriteshows")
-        .delete()
-        .eq("user_id", session.user.id)
-        .eq("shows_id", id);
-      getBookmarkedShows();
-      console.log(`the show nº ${id} is removed from your bookmarks`);
-      console.log(bookmarkedShowsId);
-    } else {
-      const newData = await supabase.from("userfavoriteshows").insert({
+  // If user click on the bookmark button, add the show to the user's bookmarked shows
+  const addToBookmarkeds = async (id) => {
+    let { data, error } = await supabase
+      .from("userfavoriteshows")
+      .insert({
         user_id: session.user.id,
         shows_id: id,
-      });
-      getBookmarkedShows();
-      console.log(`the show nº ${id} is add to your bookmarks`);
+      })
+      .single();
+    console.log(data);
+    setBookmark(true);
+    if (error) {
+      console.log(`Error: ${error}`);
+    } else {
+      console.log(`Added ${id} to bookmarked shows`);
+      setBookmarkedShowsId([...bookmarkedShowsId, data.shows_id]);
       console.log(bookmarkedShowsId);
     }
-  
   };
-  */
+
+  // If user click on the bookmark button, remove the show from the user's bookmarked shows
+  const removeBookmarkeds = async (id) => {
+    try {
+      let { data, error } = await supabase
+        .from("userfavoriteshows")
+        .delete()
+        .eq("user_id", session?.user.id)
+        .eq("shows_id", id);
+      setBookmarkedShowsId(bookmarkedShowsId.filter((item) => item != id));
+      setBookmark(false);
+    } catch (error) {
+      console.log(`Error: ${error}`);
+    }
+    console.log(`the show nº ${id} is removed from your bookmarks`);
+    console.log(bookmarkedShowsId);
+  };
+
+  // If user click on the bookmark button, add the show to the user's bookmarked shows or delete it from the user's bookmarked shows
+
+  const handleBookmarked = async (id) => {
+    console.log(id);
+    bookmarkedShowsId.includes(id)
+      ? removeBookmarkeds(id)
+      : addToBookmarkeds(id);
+  };
+
   return (
     <div className=" flex-shrink-0">
       <div className="relative h-28 md:h-36 lg:h-[174px]">
         <button
-          onClick={() => insertBookmarked(id)}
+          onClick={() => handleBookmarked(id)}
           className=" flex items-center right-2 top-2 absolute bg-darkBlue/50  w-8 h-8 rounded-full z-10 md:right-4 md:top-4"
         >
-          {bookmark ? (
+          {isLoading ? (
+            <div className="spinner-border text-primary" role="status">
+              <span className="sr-only">Loading...</span>
+            </div>
+          ) : bookmarkedShowsId.includes(id) === true || bookmark ? (
             <svg
               className=" mx-auto"
               width="12"
