@@ -1,6 +1,3 @@
-// React
-import { useState, useEffect } from "react";
-
 // Nextjs
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -42,10 +39,12 @@ export default function Navbar() {
             />
           </a>
         </Link>
-        <Link href={"/bookmarked"}>
+        <Link href={"/bookmarkeds/"}>
           <a>
             <BookmarkIcon
-              color={`${router.pathname === "/bookmarks" ? "#FFF" : "#5A698F"}`}
+              color={`${
+                router.pathname === "/bookmarked" ? "#FFF" : "#5A698F"
+              }`}
             />
           </a>
         </Link>

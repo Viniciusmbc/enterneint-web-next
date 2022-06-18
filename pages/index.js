@@ -20,14 +20,30 @@ import { getLayout } from "../components/NestedLayout";
 import { supabase } from "../utils/supabaseClient";
 
 // SWR
-import useSWR from "swr";
+import useSWR, { useSWRConfig } from "swr";
 
 const fetcher = (url) =>
-  fetch(url, { method: "GET" }).then((res) => res.json());
+  fetch(url, {
+    method: "GET",
+    headers: {
+      apikey: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imttemdrc3RyYWF6cnhreXhhZWpoIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTQwNDAwMjksImV4cCI6MTk2OTYxNjAyOX0.-_2tZI3HYJRFQ81SXp4FZXnBRcHO6gFFuLkpfAyAu1I`,
+      Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imttemdrc3RyYWF6cnhreXhhZWpoIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTQwNDAwMjksImV4cCI6MTk2OTYxNjAyOX0.-_2tZI3HYJRFQ81SXp4FZXnBRcHO6gFFuLkpfAyAu1I`,
+    },
+  }).then((res) => res.json());
 
-export default function Home({ trendings, user }) {
-  // Fetch data: all movies and tv series
-  const { data: allshows, error } = useSWR("/api/shows", fetcher);
+export default function Home({ trendings, allshows, user, bookmarked }) {
+  // Auth
+  const { session, signOut } = useAuth();
+  console.log(session);
+
+  const { mutate } = useSWRConfig();
+
+  // SWR
+  const { data: bookmarkedshows, error: bookmarkedError } = useSWR(
+    `https://kmzgkstraazrxkyxaejh.supabase.co/rest/v1/userfavoriteshows?select=*&user_id=eq.${user?.id}`,
+    fetcher
+  );
+  console.log(bookmarkedshows);
 
   // Store the Bookmarkeds shows in a state
   const [bookmarkedShows, setBookmarkedShows] = useState([]);
@@ -35,15 +51,7 @@ export default function Home({ trendings, user }) {
   // Search state
   const [searchActive, setSearchActive] = useState(false);
 
-  // Auth
-  const { session, signOut } = useAuth();
-  console.log(user);
-
-  console.log(bookmarkedShows);
-
-  const idAllshows = allshows?.map((item) => item.id);
-  console.log(idAllshows);
-
+  console.log(allshows);
   // If the user is logged in, get the user's bookmarked shows
   useEffect(() => {
     const getBookmarkedShowsID = async () => {
@@ -65,10 +73,6 @@ export default function Home({ trendings, user }) {
       getBookmarkedShowsID();
     }
   }, [session]);
-
-  const isBookmarked = idAllshows.map((item) => bookmarkedShows.includes(item));
-
-  console.log(isBookmarked);
 
   // If search state is active, show the data
   const checkSearchStatus = (status) => {
@@ -132,7 +136,9 @@ export default function Home({ trendings, user }) {
             {allshows &&
               allshows?.map(({ id, title, year, category, rating }) => (
                 <Cards
+                  bookmarkedShows={bookmarked}
                   key={id}
+                  id={id}
                   title={title}
                   year={year}
                   category={category}
@@ -141,8 +147,7 @@ export default function Home({ trendings, user }) {
                   )}/regular/medium.jpg`}
                   classificao={rating}
                   session={session}
-                  id={id}
-                  isBookmarked={bookmarkedShows}
+                  bookmark={bookmarkedShows.includes(id)}
                 />
               ))}
           </section>
@@ -180,7 +185,7 @@ export async function getServerSideProps({ req, res }) {
   // Get bookmarked shows
   const { data: bookmarked } = await supabase
     .from("userfavoriteshows")
-    .select("shows_id, Shows (*)")
+    .select("shows_id")
     .eq("user_id", user.id);
 
   return {

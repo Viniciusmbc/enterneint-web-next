@@ -4,8 +4,13 @@ import Head from "next/head";
 // React hooks
 import { useState } from "react";
 
-// Components
+// Auth Context
+import { useAuth } from "../context/AuthContext";
+
+// Layout
 import { getLayout } from "../components/NestedLayout";
+
+// Components
 import SearchBar from "../components/SearchBar";
 import Cards from "../components/Cards";
 import Title from "../components/Title";
@@ -13,11 +18,14 @@ import Title from "../components/Title";
 // Supabase
 import { supabase } from "../utils/supabaseClient";
 
-export default function Bookmarked({ data }) {
+export default function Bookmarked({ data, user }) {
   // Get bookmarked shows
   const shows = data.map(({ Shows }) => {
     return Shows;
   });
+
+  // Auth Context
+  const { session, signOut } = useAuth();
 
   // Search state
   const [searchActive, setSearchActive] = useState(false);
@@ -69,6 +77,7 @@ export default function Bookmarked({ data }) {
                     title
                   )}/regular/medium.jpg`}
                   classificao={rating}
+                  session={session}
                 />
               )
             )}
@@ -93,6 +102,7 @@ export default function Bookmarked({ data }) {
                     title
                   )}/regular/medium.jpg`}
                   classificao={rating}
+                  session={session}
                 />
               )
             )}

@@ -7,6 +7,18 @@ import { useEffect, useState } from "react";
 // supabase
 import { supabase } from "../utils/supabaseClient";
 
+// SWR
+import useSWR, { useSWRConfig } from "swr";
+
+const fetcher = (url) =>
+  fetch(url, {
+    method: "GET",
+    headers: {
+      apikey: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imttemdrc3RyYWF6cnhreXhhZWpoIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTQwNDAwMjksImV4cCI6MTk2OTYxNjAyOX0.-_2tZI3HYJRFQ81SXp4FZXnBRcHO6gFFuLkpfAyAu1I`,
+      Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imttemdrc3RyYWF6cnhreXhhZWpoIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTQwNDAwMjksImV4cCI6MTk2OTYxNjAyOX0.-_2tZI3HYJRFQ81SXp4FZXnBRcHO6gFFuLkpfAyAu1I`,
+    },
+  }).then((res) => res.json());
+
 export default function Cards({
   id,
   title,
@@ -18,12 +30,54 @@ export default function Cards({
   classificao,
   session,
 }) {
-  // Store the Bookmarkeds shows in a state
-  const [bookmarkedShowsId, setBookmarkedShowsId] = useState(bookmarkedShows);
+  // SWR
+  const { mutate } = useSWRConfig();
 
-  // Add bookmarked to user
+  // Fetch data: all bookmarked shows
+  const { data: bookmarkedshows, error: bookmarkedError } = useSWR(
+    `https://kmzgkstraazrxkyxaejh.supabase.co/rest/v1/userfavoriteshows?select=*&user_id=eq.${session?.user?.id}`,
+    fetcher
+  );
+
+  // Update the bookmarked shows if the clicked show is bookmarked
+  useEffect(() => {
+    if (bookmarkedshows) {
+      mutate(
+        `https://kmzgkstraazrxkyxaejh.supabase.co/rest/v1/userfavoriteshows?select=*&user_id=eq.${session?.user?.id}`,
+        bookmarkedshows,
+        false
+      );
+    }
+  }, [bookmarkedshows]);
+
+  console.log(session);
+
+  const bookmarkedShowsId = bookmarkedshows?.map((show) => show.shows_id);
+
+  console.log(bookmarkedShowsId);
+
+  // If user click on the bookmark button, add the show to the user's bookmarked shows
   const insertBookmarked = async (id) => {
-    // Get all the bookmarked shows
+    if (bookmarkedShowsId?.includes(id)) {
+      const updateData = await supabase
+        .from("userfavoriteshows")
+        .delete()
+        .eq("user_id", session.user.id)
+        .eq("shows_id", id);
+      console.log(updateData);
+      console.log(`updateData: ${updateData}, id: ${id}`);
+    } else {
+      const updateData = await supabase.from("userfavoriteshows").insert({
+        user_id: session?.user?.id,
+        shows_id: id,
+      });
+      console.log(updateData);
+      console.log(`updateData: ${updateData}, id: ${id}`);
+    }
+  };
+
+  /*
+    // Get  the bookmarked shows
     const getBookmarkedShows = async () => {
       const { data, error } = await supabase
         .from("userfavoriteshows")
@@ -34,9 +88,9 @@ export default function Cards({
       } else {
         const bookmarkedShowsId = data?.map((item) => item.shows_id);
         setBookmarkedShowsId(bookmarkedShowsId);
-        console.log(bookmarkedShowsId);
       }
     };
+
 
     getBookmarkedShows();
 
@@ -46,8 +100,8 @@ export default function Cards({
         .delete()
         .eq("user_id", session.user.id)
         .eq("shows_id", id);
-      console.log(`the show nº ${id} is removed from your bookmarks`);
       getBookmarkedShows();
+      console.log(`the show nº ${id} is removed from your bookmarks`);
       console.log(bookmarkedShowsId);
     } else {
       const newData = await supabase.from("userfavoriteshows").insert({
@@ -55,11 +109,12 @@ export default function Cards({
         shows_id: id,
       });
       getBookmarkedShows();
+      console.log(`the show nº ${id} is add to your bookmarks`);
       console.log(bookmarkedShowsId);
-      console.log(`the show nº ${id} is added to your bookmarks`);
     }
+  
   };
-
+  */
   return (
     <div className=" flex-shrink-0">
       <div className="relative h-28 md:h-36 lg:h-[174px]">
