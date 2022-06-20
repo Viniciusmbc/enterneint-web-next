@@ -24,10 +24,10 @@ export default function Bookmarked({ data, user, moviesBookmarked }) {
     return Shows;
   });
 
-  const movies = shows?.filter(({ category }) => category === "Movie");
+  console.log(data)
+  
 
   console.log(data);
-  console.log(movies);
   // Auth Context
   const { session, signOut } = useAuth();
 
@@ -66,11 +66,11 @@ export default function Bookmarked({ data, user, moviesBookmarked }) {
           onFocusHandler={(status) => checkSearchStatus(status)}
         />
 
-        {movies ? (
+        {data ? (
           <>
             <Title title={"Bookmarked Movies"} />
             <section className=" grid grid-cols-2 mx-4 gap-4 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
-              {movies.map(({ title, year, category, rating, id }) => (
+              {data.map(({ title, year, category, rating, id }) => (
                 <Cards
                   key={id}
                   bookmark={true}
@@ -90,7 +90,7 @@ export default function Bookmarked({ data, user, moviesBookmarked }) {
           <>
             <Title title={"Bookmarked TV Series"} />
             <section className=" grid grid-cols-2 mx-4 gap-4 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
-              {movies.map(({ title, year, category, rating, id }) => (
+              {data.map(({ title, year, category, rating, id }) => (
                 <Cards
                   key={id}
                   bookmark={true}
@@ -128,12 +128,15 @@ export async function getServerSideProps({ req, res }) {
   const { data } = await supabase
     .from("userfavoriteshows")
     .select("shows_id, Shows(title, year, category, rating)")
-    .eq("user_id", user.id);
+    .eq("user_id", user.id).eq("category", "Movie")
 
+    console.log(data)
+  
   return {
     props: {
       data,
       user,
+      
     },
   };
 }

@@ -7,6 +7,9 @@ import { useEffect, useState } from "react";
 // supabase
 import { supabase } from "../utils/supabaseClient";
 
+// Auth Context
+import { useAuth } from "../context/AuthContext";
+
 export default function Cards({
   id,
   title,
@@ -14,36 +17,38 @@ export default function Cards({
   category,
   image,
   classificao,
-  session,
+  
 }) {
-  const [bookmarkedShowsId, setBookmarkedShowsId] = useState([]);
+  const [bookmarkedShowsId, setBookmarkedShowsId] = useState(new Set());
   const [bookmark, setBookmark] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Auth
+  const { session, signOut } = useAuth();
+
   useEffect(() => {
-    setIsLoading(true);
     const getData = async () => {
       const { data, error } = await supabase
         .from("userfavoriteshows")
         .select("*")
-        .eq("user_id", session?.user.id);
+        .eq("user_id", session.user.id);
       if (error) {
         console.log(`Error: ${error}`);
       } else {
-        const id = data.map((item) => item.shows_id);
-        setBookmarkedShowsId(id);
+        const id = data.map((item) => item.shows_id && item.shows_id );
+        setBookmarkedShowsId(new Set(id));
       }
     };
-    getData();
-    setIsLoading(false);
+    
+    session?.user.id ? ( getData() && setIsLoading(false) ) : setIsLoading(true);
   }, [session]);
 
-  console.log(`bookmarkedShowsId ${bookmarkedShowsId}`);
+  console.log(bookmarkedShowsId);
   console.log(`user: ${session?.user.id ?? "no user"}`);
 
   // If user click on the bookmark button, add the show to the user's bookmarked shows
   const addToBookmarkeds = async (id) => {
-    let { data, error } = await supabase
+    const { data, error } = await supabase
       .from("userfavoriteshows")
       .insert({
         user_id: session.user.id,
@@ -56,7 +61,7 @@ export default function Cards({
       console.log(`Error: ${error}`);
     } else {
       console.log(`Added ${id} to bookmarked shows`);
-      setBookmarkedShowsId([...bookmarkedShowsId, data.shows_id]);
+      setBookmarkedShowsId( prev => new Set(prev).add(data.shows_id));
       console.log(bookmarkedShowsId);
     }
   };
@@ -64,27 +69,46 @@ export default function Cards({
   // If user click on the bookmark button, remove the show from the user's bookmarked shows
   const removeBookmarkeds = async (id) => {
     try {
-      let { data, error } = await supabase
+      const { data, error } = await supabase
         .from("userfavoriteshows")
         .delete()
         .eq("user_id", session?.user.id)
         .eq("shows_id", id);
-      setBookmarkedShowsId(bookmarkedShowsId.filter((item) => item != id));
-      setBookmark(false);
+      setBookmarkedShowsId(prev => {
+          const next = new Set(prev);
+          next.delete(id)
+          return next
+      } );
+      
     } catch (error) {
       console.log(`Error: ${error}`);
     }
+    setBookmark(false)
     console.log(`the show nº ${id} is removed from your bookmarks`);
     console.log(bookmarkedShowsId);
+    
   };
 
   // If user click on the bookmark button, add the show to the user's bookmarked shows or delete it from the user's bookmarked shows
 
   const handleBookmarked = async (id) => {
     console.log(id);
-    bookmarkedShowsId.includes(id)
+    bookmarkedShowsId.has(id)
       ? removeBookmarkeds(id)
       : addToBookmarkeds(id);
+  };
+  
+  // Function to change titles in images cards src
+  const changeImageSrc = (title) => {
+    if (title === "Earth’s Untouched") {
+      const earthsuntouched = "earths-untouched";
+      return earthsuntouched;
+    }
+    const src = title
+      .replace(/([^\w]+|\s+)/g, "-")
+      .replace("II", "2")
+      .toLowerCase();
+    return src;
   };
 
   return (
@@ -98,7 +122,7 @@ export default function Cards({
             <div className="spinner-border text-primary" role="status">
               <span className="sr-only">Loading...</span>
             </div>
-          ) : bookmarkedShowsId.includes(id) === true || bookmark ? (
+          ) : bookmarkedShowsId.has(id) === true || bookmark ? (
             <svg
               className=" mx-auto"
               width="12"
@@ -131,7 +155,9 @@ export default function Cards({
         <Image
           className="rounded "
           objectFit="cover"
-          src={image}
+          src={`https://kmzgkstraazrxkyxaejh.supabase.co/storage/v1/object/public/thumbnails/${changeImageSrc(
+            changeImageSrc(title)
+          )}/regular/medium.jpg`}
           alt={`${title} poster`}
           layout="fill"
         />

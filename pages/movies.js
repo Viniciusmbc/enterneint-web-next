@@ -15,7 +15,7 @@ import { getLayout } from "../components/NestedLayout";
 // Supabase
 import { supabase } from "../utils/supabaseClient";
 
-export default function Movies({ data, user }) {
+export default function Movies({ data, user, bookmarked }) {
   console.log(user);
 
   // Search state
@@ -55,17 +55,15 @@ export default function Movies({ data, user }) {
         {!searchActive && (
           <section className=" grid grid-cols-2 mx-4 gap-4 mb-14 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
             {data.map(
-              ({ title, year, category, rating, isBookmarked }, index) => (
+              ({ title, year, category, rating, id }, index) => (
                 <Cards
-                  key={index}
-                  bookmark={isBookmarked}
-                  title={title}
-                  year={year}
-                  category={category}
-                  image={`https://kmzgkstraazrxkyxaejh.supabase.co/storage/v1/object/public/thumbnails/${changeImageSrc(
-                    title
-                  )}/regular/medium.jpg`}
-                  classificao={rating}
+                bookmarkedShows={bookmarked}
+                key={id}
+                id={id}
+                title={title}
+                year={year}
+                category={category}
+                classificao={rating}
                 />
               )
             )}
@@ -90,13 +88,20 @@ export async function getServerSideProps({ req, res }) {
   const { data } = await supabase
     .from("Shows")
     .select()
-    .filter("category", "eq", "Movie");
-  console.log(data);
+    .eq("category", "Movie");
+
+    // Get bookmarked shows
+    const { data: bookmarked } = await supabase
+    .from("userfavoriteshows")
+    .select("shows_id")
+    .eq("user_id", user.id);
+
 
   return {
     props: {
       data,
       user,
+      bookmarked
     },
   };
 }

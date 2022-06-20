@@ -77,15 +77,17 @@ export default function SearchBar({ shows, data, onFocusHandler, title }) {
             {`Found ${results.length} results for "${query}"`}{" "}
           </h2>
           <section className=" grid grid-cols-2 mx-4 gap-4 mb-14 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
-            {results.map((item, index) => (
+            {results.map(({title, id, year, category, rating}, index) => (
               <Cards
                 key={index}
                 bookmark={false}
-                title={item.title}
-                year={item.year}
-                category={item.category}
-                image={item.thumbnail.regular.medium}
-                classificao={item.rating}
+                title={title}
+                year={year}
+                category={category}
+                image={`https://kmzgkstraazrxkyxaejh.supabase.co/storage/v1/object/public/thumbnails/${changeImageSrc(
+                  changeImageSrc(title)
+                )}/regular/medium.jpg`}
+                classificao={rating}
               />
             ))}
           </section>

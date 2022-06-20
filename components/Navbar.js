@@ -43,7 +43,7 @@ export default function Navbar() {
           <a>
             <BookmarkIcon
               color={`${
-                router.pathname === "/bookmarked" ? "#FFF" : "#5A698F"
+                router.pathname === "/bookmarkeds" ? "#FFF" : "#5A698F"
               }`}
             />
           </a>

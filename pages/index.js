@@ -119,11 +119,7 @@ export default function Home({ trendings, allshows, user, bookmarked }) {
                   title={title}
                   year={year}
                   category={category}
-                  image={`https://kmzgkstraazrxkyxaejh.supabase.co/storage/v1/object/public/thumbnails/${changeImageSrc(
-                    title
-                  )}/regular/medium.jpg`}
                   classificao={rating}
-                  session={session}
                 />
               ))}
           </section>
@@ -141,7 +137,7 @@ export async function getServerSideProps({ req, res }) {
   if (!user) {
     console.log("Please login.");
     return { props: {}, redirect: { destination: "/login", permanent: false } };
-  }
+  } 
 
   console.log(user);
 
