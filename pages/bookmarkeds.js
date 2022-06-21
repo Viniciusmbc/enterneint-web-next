@@ -2,7 +2,7 @@
 import Head from "next/head";
 
 // React hooks
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // Auth Context
 import { useAuth } from "../context/AuthContext";
@@ -18,18 +18,16 @@ import Title from "../components/Title";
 // Supabase
 import { supabase } from "../utils/supabaseClient";
 
-export default function Bookmarked({ data, user, moviesBookmarked }) {
-  // Get bookmarked shows
-  const shows = data?.map(({ Shows }) => {
-    return Shows;
-  });
+export default function Bookmarked({ data, bookmarkedShows, user}) {
+const bookmarkedMovies = bookmarkedShows?.filter( ({category}) => {
+     return category && category === "Movie"
+     } )
 
-  console.log(data)
-  
+const bookmarkedTVseries = bookmarkedShows?.filter( ({category}) => {
+     return category && category === "TV Series"
+    } )
 
-  console.log(data);
-  // Auth Context
-  const { session, signOut } = useAuth();
+console.log(bookmarkedMovies, bookmarkedTVseries )
 
   // Search state
   const [searchActive, setSearchActive] = useState(false);
@@ -43,70 +41,52 @@ export default function Bookmarked({ data, user, moviesBookmarked }) {
     }
   };
 
-  // Function to change titles in images cards src
-  const changeImageSrc = (title) => {
-    if (title === "Earth’s Untouched") {
-      const earthsuntouched = "earths-untouched";
-      return earthsuntouched;
-    }
-    const src = title
-      .replace(/([^\w]+|\s+)/g, "-")
-      .replace("II", "2")
-      .toLowerCase();
-    return src;
-  };
-
   return (
     <>
       <Head></Head>
       <main className=" w-full">
         <SearchBar
           shows={"bookmarked shows"}
-          data={data}
+          data={bookmarkedShows}
           onFocusHandler={(status) => checkSearchStatus(status)}
         />
-
-        {data ? (
+  {bookmarkedMovies.length > 0 && (
           <>
             <Title title={"Bookmarked Movies"} />
             <section className=" grid grid-cols-2 mx-4 gap-4 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
-              {data.map(({ title, year, category, rating, id }) => (
+              {bookmarkedMovies.map(({ title, year, category, rating, id }) => (
                 <Cards
-                  key={id}
-                  bookmark={true}
-                  title={title}
-                  year={year}
-                  category={category}
-                  image={`https://kmzgkstraazrxkyxaejh.supabase.co/storage/v1/object/public/thumbnails/${changeImageSrc(
-                    title
-                  )}/regular/medium.jpg`}
-                  classificao={rating}
-                  session={session}
-                />
-              ))}
-            </section>
-          </>
-        ) : (
-          <>
-            <Title title={"Bookmarked TV Series"} />
-            <section className=" grid grid-cols-2 mx-4 gap-4 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
-              {data.map(({ title, year, category, rating, id }) => (
-                <Cards
-                  key={id}
-                  bookmark={true}
-                  title={title}
-                  year={year}
-                  category={category}
-                  image={`https://kmzgkstraazrxkyxaejh.supabase.co/storage/v1/object/public/thumbnails/${changeImageSrc(
-                    title
-                  )}/regular/medium.jpg`}
-                  classificao={rating}
-                  session={session}
+                key={id}
+                id={id}
+                bookmarkedShows={data}
+                title={title}
+                year={year}
+                category={category}
+                classificao={rating}
                 />
               ))}
             </section>
           </>
         )}
+        { bookmarkedTVseries.length > 0 && (
+          <>
+            <Title title={"Bookmarked TV Series"} bookmarkedtvSeries={ bookmarkedMovies.length > 0 ? true : false}/>
+            <section className=" grid grid-cols-2 mx-4 gap-4 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
+              {bookmarkedTVseries.map(({ title, year, category, rating, id }) => (
+                <Cards
+                key={id}
+                id={id}
+                bookmarkedShows={data}
+                title={title}
+                year={year}
+                category={category}
+                classificao={rating}
+                />
+              ))}
+            </section>
+          </>
+        )}
+      
       </main>
     </>
   );
@@ -117,6 +97,7 @@ Bookmarked.getLayout = getLayout;
 export async function getServerSideProps({ req, res }) {
   // Get user by cookie
   const { user } = await supabase.auth.api.getUserByCookie(req);
+  console.log(user)
 
   // If user not authenticaded, redirect
   if (!user) {
@@ -124,19 +105,26 @@ export async function getServerSideProps({ req, res }) {
     return { props: {}, redirect: { destination: "/login", permanent: false } };
   }
 
-  // Get All bookmarkeds
-  const { data } = await supabase
-    .from("userfavoriteshows")
-    .select("shows_id, Shows(title, year, category, rating)")
-    .eq("user_id", user.id).eq("category", "Movie")
+  // Get all favorite shows
+  const { data, error } = await supabase
+  .from("userfavoriteshows")
+  .select("shows_id, Shows(*)")
+  .eq("user_id", user.id);
 
-    console.log(data)
-  
+  const bookmarkedShows = data.map( ({Shows}) =>{
+    return Shows } )
+
+  if(error){
+  return  console.log(`Error: ${error}`)
+  }
+
+ console.log(data)
+
   return {
     props: {
       data,
       user,
-      
+      bookmarkedShows
     },
   };
 }

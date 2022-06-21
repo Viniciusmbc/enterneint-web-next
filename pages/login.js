@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 
 // React Hooks
 import { useRef, useState } from "react";
+import { LoadingSpinner } from "../components/Icons";
 
 // import context
 import { useAuth } from "../context/AuthContext";
@@ -11,6 +12,9 @@ import { useAuth } from "../context/AuthContext";
 export default function Login() {
   // Error state
   const [error, setError] = useState(null);
+
+  // Loading state
+  const [isLoading, setIsLoading] = useState(false)
 
   // useAuth from context
   const { session, signIn } = useAuth();
@@ -26,6 +30,7 @@ export default function Login() {
 
   // Sign in the user
   const handleLogin = async (e) => {
+    setIsLoading(true)
     e.preventDefault();
 
     // Get the email and password from the form
@@ -36,10 +41,8 @@ export default function Login() {
     setError(error);
     console.log(data);
 
-    data ? router.push("/") : null;
+    data && router.push("/") && setIsLoading(false)
   };
-
-  console.log(session?.user?.aud === "authenticated" ? "true" : "false");
 
   return (
     <div className=" min-h-screen bg-darkBlue">
@@ -73,12 +76,15 @@ export default function Login() {
               ref={passwordRef}
               required
             />
-            <button
+             <button
               className="mt-10 rounded-md bg-red py-2 hover:bg-white"
               type="submit"
             >
-              Login to your account
-            </button>
+            {isLoading ? (<LoadingSpinner color={`#FFF` }/> ) : (
+  <p>Login to your account</p>
+)
+}
+</button>
             {error?.message && (
               <div className=" text-red py-6">{error?.message}</div>
             )}

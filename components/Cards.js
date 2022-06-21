@@ -9,6 +9,7 @@ import { supabase } from "../utils/supabaseClient";
 
 // Auth Context
 import { useAuth } from "../context/AuthContext";
+import { LoadingSpinner } from "./Icons";
 
 export default function Cards({
   id,
@@ -119,9 +120,7 @@ export default function Cards({
           className=" flex items-center right-2 top-2 absolute bg-darkBlue/50  w-8 h-8 rounded-full z-10 md:right-4 md:top-4"
         >
           {isLoading ? (
-            <div className="spinner-border text-primary" role="status">
-              <span className="sr-only">Loading...</span>
-            </div>
+         <LoadingSpinner color={"#FFF"} />
           ) : bookmarkedShowsId.has(id) === true || bookmark ? (
             <svg
               className=" mx-auto"

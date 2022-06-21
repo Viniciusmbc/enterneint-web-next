@@ -29,7 +29,10 @@ export default function Home({ trendings, allshows, user, bookmarked }) {
   // Search state
   const [searchActive, setSearchActive] = useState(false);
 
+  console.log(bookmarked)
+
   // If the user is logged in, get the user's bookmarked shows
+  /*
   useEffect(() => {
     const getBookmarkedShowsID = async () => {
       const { data, error } = await supabase
@@ -50,6 +53,7 @@ export default function Home({ trendings, allshows, user, bookmarked }) {
       getBookmarkedShowsID();
     }
   }, [session]);
+  */
 
   // If search state is active, show the data
   const checkSearchStatus = (status) => {
@@ -157,7 +161,7 @@ export async function getServerSideProps({ req, res }) {
   // Get bookmarked shows
   const { data: bookmarked } = await supabase
     .from("userfavoriteshows")
-    .select("shows_id")
+    .select("shows_id, Shows(*)")
     .eq("user_id", user.id);
 
   return {
