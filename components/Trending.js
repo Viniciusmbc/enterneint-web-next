@@ -1,7 +1,8 @@
-import { MoviesIcon, TVIcon } from "./Icons";
+import { LoadingSpinner, MoviesIcon, TVIcon } from "./Icons";
 import Image from "next/image";
 
 export default function Trending({ year, category, rating, title, image }) {
+
   return (
     <>
       <div className="relative ml-4 mr-2 w-9/12  max-w-md  flex-shrink-0 ">

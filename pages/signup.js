@@ -13,11 +13,12 @@ export default function Signup() {
   // useRef to store the input element
   const emailRef = useRef();
   const passwordRef = useRef();
+  const passwordRepeatRef = useRef()
 
   // Auth
   const { signUp } = useAuth();
 
-  // error state
+  // Error state
   const [error, setError] = useState(null);
 
   const handleSubmit = async (e) => {
@@ -26,8 +27,16 @@ export default function Signup() {
     // Get the email and password from the form
     const email = emailRef.current.value;
     const password = passwordRef.current.value;
+    const passwordRepeat = passwordRepeatRef.current.value;
 
+    // Get error from supabase auth
     const { error } = await signUp({ email, password });
+
+    console.log(error)
+
+    if( password != passwordRepeat) {
+      return setError(`Passwords don't match`)
+    }
 
     if (error) {
       setError(error.message);
@@ -35,6 +44,8 @@ export default function Signup() {
       router.push("/");
     }
   };
+
+  
 
   return (
     <div className="min-h-screen  bg-darkBlue">
@@ -72,6 +83,7 @@ export default function Signup() {
               required
               placeholder="Repeat Password"
               className="mt-6 border-b-2 border-greyishBlue bg-semiDarkBlue py-2 text-white"
+              ref={passwordRepeatRef}
             />
 
             <button
@@ -79,8 +91,12 @@ export default function Signup() {
               type="submit"
             >
               Create an account
-            </button>
-            {error && <p className="text-red text-sm mt-4">{error}</p>}
+            </button> {error && (
+              <div className=" text-red pt-6 text-center">
+               <p> {error} ! </p>
+                </div>
+                
+            )}
 
             <div className="mx-auto py-6">
               <p className="text-white">

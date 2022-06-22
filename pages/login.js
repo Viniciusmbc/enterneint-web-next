@@ -26,7 +26,6 @@ export default function Login() {
   const emailRef = useRef();
   const passwordRef = useRef();
 
-  console.log(session);
 
   // Sign in the user
   const handleLogin = async (e) => {
@@ -40,8 +39,10 @@ export default function Login() {
     const { data, error } = await signIn({ email, password });
     setError(error);
     console.log(data);
+    console.log(error)
 
-    data && router.push("/") && setIsLoading(false)
+    data && router.push("/") 
+     setIsLoading(false)
   };
 
   return (
@@ -86,12 +87,16 @@ export default function Login() {
 }
 </button>
             {error?.message && (
-              <div className=" text-red py-6">{error?.message}</div>
+              <div className=" text-red pt-6">
+               <p> {error.message} </p>
+                <p> {`Please, verify your email or password`} </p>
+                </div>
+                
             )}
 
             <div className="py-6">
               <p className="text-white">
-                {`Dont have an account?`}
+                {`Don't have an account?`}
                 <Link href="/signup">
                   <a className="text-red "> Sign Up</a>
                 </Link>

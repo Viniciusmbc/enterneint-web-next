@@ -44,7 +44,6 @@ export default function SearchBar({ shows, data, onFocusHandler, title }) {
     [onFocusHandler]
   );
 
-  console.log(typeof results.length);
 
   return (
     <>

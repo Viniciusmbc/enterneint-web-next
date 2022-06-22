@@ -17,7 +17,7 @@ import { getLayout } from "../components/NestedLayout";
 // supabase
 import { supabase } from "../utils/supabaseClient";
 
-export default function Series({ data, user }) {
+export default function Series({ data, user, bookmarked }) {
   const [searchActive, setSearchActive] = useState(false);
 
   console.log(user);
@@ -28,19 +28,6 @@ export default function Series({ data, user }) {
     } else {
       setSearchActive(false);
     }
-  };
-
-  // Function to change titles in images cards src
-  const changeImageSrc = (title) => {
-    if (title === "Earth’s Untouched") {
-      const earthsuntouched = "earths-untouched";
-      return earthsuntouched;
-    }
-    const src = title
-      ?.replace(/([^\w]+|\s+)/g, "-")
-      .replace("II", "2")
-      .toLowerCase();
-    return src;
   };
 
   return (
@@ -57,19 +44,16 @@ export default function Series({ data, user }) {
           <section className=" grid grid-cols-2 mx-4 gap-4 mb-14 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
             {data.map(
               (
-                { title, year, category, thumbnail, rating, isBookmarked },
-                index
+                { title, year, category, id, rating, }
               ) => (
                 <Cards
-                  key={index}
-                  bookmark={isBookmarked}
-                  title={title}
-                  year={year}
-                  category={category}
-                  image={`https://kmzgkstraazrxkyxaejh.supabase.co/storage/v1/object/public/thumbnails/${changeImageSrc(
-                    title
-                  )}/regular/medium.jpg`}
-                  classificao={rating}
+                bookmarkedShows={bookmarked}
+                key={id}
+                id={id}
+                title={title}
+                year={year}
+                category={category}
+                classificao={rating}
                 />
               )
             )}
@@ -96,10 +80,17 @@ export async function getServerSideProps({ req, res }) {
     .select()
     .filter("category", "eq", "TV Series");
 
+   // Get bookmarked shows
+   const { data: bookmarked } = await supabase
+   .from("userfavoriteshows")
+   .select("shows_id, Shows(*)")
+   .eq("user_id", user.id);
+
   return {
     props: {
       data,
       user,
+      bookmarked
     },
   };
 }
