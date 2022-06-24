@@ -19,6 +19,8 @@ import { supabase } from "../utils/supabaseClient";
 
 export default function Series({ data, user, bookmarked }) {
   const [searchActive, setSearchActive] = useState(false);
+  // Store the message if the bookmarked shows is add
+  const [message, setMessage] = useState("");
 
   console.log(user);
 
@@ -28,6 +30,11 @@ export default function Series({ data, user, bookmarked }) {
     } else {
       setSearchActive(false);
     }
+  };
+
+  const pull_data = (data) => {
+    console.log(data);
+    setMessage(data);
   };
 
   return (
@@ -42,11 +49,8 @@ export default function Series({ data, user, bookmarked }) {
 
         {!searchActive && (
           <section className=" grid grid-cols-2 mx-4 gap-4 mb-14 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
-            {data.map(
-              (
-                { title, year, category, id, rating, }
-              ) => (
-                <Cards
+            {data.map(({ title, year, category, id, rating }) => (
+              <Cards
                 bookmarkedShows={bookmarked}
                 key={id}
                 id={id}
@@ -54,9 +58,9 @@ export default function Series({ data, user, bookmarked }) {
                 year={year}
                 category={category}
                 classificao={rating}
-                />
-              )
-            )}
+                addMessage={pull_data}
+              />
+            ))}
           </section>
         )}
       </section>
@@ -80,17 +84,17 @@ export async function getServerSideProps({ req, res }) {
     .select()
     .filter("category", "eq", "TV Series");
 
-   // Get bookmarked shows
-   const { data: bookmarked } = await supabase
-   .from("userfavoriteshows")
-   .select("shows_id, Shows(*)")
-   .eq("user_id", user.id);
+  // Get bookmarked shows
+  const { data: bookmarked } = await supabase
+    .from("userfavoriteshows")
+    .select("shows_id, Shows(*)")
+    .eq("user_id", user.id);
 
   return {
     props: {
       data,
       user,
-      bookmarked
+      bookmarked,
     },
   };
 }

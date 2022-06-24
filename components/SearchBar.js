@@ -16,7 +16,9 @@ export default function SearchBar({ shows, data, onFocusHandler, title }) {
         onFocusHandler(true);
         setActive(true);
         setResults(
-          data.filter((item) => item.title.toLowerCase().includes(query))
+          data.filter((item) =>
+            item.title.toLowerCase().includes(query.toLowerCase())
+          )
         );
       } else {
         onFocusHandler(false);
@@ -43,7 +45,6 @@ export default function SearchBar({ shows, data, onFocusHandler, title }) {
     },
     [onFocusHandler]
   );
-
 
   return (
     <>
@@ -76,7 +77,7 @@ export default function SearchBar({ shows, data, onFocusHandler, title }) {
             {`Found ${results.length} results for "${query}"`}{" "}
           </h2>
           <section className=" grid grid-cols-2 mx-4 gap-4 mb-14 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
-            {results.map(({title, id, year, category, rating}) => (
+            {results.map(({ title, id, year, category, rating }) => (
               <Cards
                 key={id}
                 bookmark={false}

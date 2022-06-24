@@ -15,9 +15,7 @@ import { getLayout } from "../components/NestedLayout";
 // Supabase
 import { supabase } from "../utils/supabaseClient";
 
-export default function Movies({ data, user, bookmarked }) {
-  console.log(user);
-
+export default function Movies({ data, bookmarked }) {
   // Search state
   const [searchActive, setSearchActive] = useState(false);
   const checkSearchStatus = (status) => {
@@ -41,9 +39,8 @@ export default function Movies({ data, user, bookmarked }) {
 
         {!searchActive && (
           <section className=" grid grid-cols-2 mx-4 gap-4 mb-14 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
-            {data.map(
-              ({ title, year, category, rating, id }, index) => (
-                <Cards
+            {data.map(({ title, year, category, rating, id }) => (
+              <Cards
                 bookmarkedShows={bookmarked}
                 key={id}
                 id={id}
@@ -51,9 +48,8 @@ export default function Movies({ data, user, bookmarked }) {
                 year={year}
                 category={category}
                 classificao={rating}
-                />
-              )
-            )}
+              />
+            ))}
           </section>
         )}
       </section>
@@ -77,18 +73,17 @@ export async function getServerSideProps({ req, res }) {
     .select()
     .eq("category", "Movie");
 
-    // Get bookmarked shows
-    const { data: bookmarked } = await supabase
+  // Get bookmarked shows
+  const { data: bookmarked } = await supabase
     .from("userfavoriteshows")
     .select("shows_id")
     .eq("user_id", user.id);
-
 
   return {
     props: {
       data,
       user,
-      bookmarked
+      bookmarked,
     },
   };
 }

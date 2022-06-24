@@ -1,9 +1,8 @@
 // Nextjs
 import Head from "next/head";
-import { useRouter } from "next/router";
 
 // React Hooks
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 // Auth Context
 import { useAuth } from "../context/AuthContext";
@@ -12,6 +11,7 @@ import { useAuth } from "../context/AuthContext";
 import Cards from "../components/Cards";
 import Trending from "../components/Trending";
 import SearchBar from "../components/SearchBar";
+import AlertMessage from "../components/AlertMessage";
 
 // Layouts
 import { getLayout } from "../components/NestedLayout";
@@ -19,23 +19,17 @@ import { getLayout } from "../components/NestedLayout";
 // Supabase
 import { supabase } from "../utils/supabaseClient";
 
-export default function Home({ trendings, allshows, user, bookmarked }) {
+export default function Home({ trendings, allshows, bookmarked }) {
   // Auth
   const { session, signOut } = useAuth();
-
-  // Store the Bookmarkeds shows in a state
-  const [bookmarkedShows, setBookmarkedShows] = useState([]);
-
-  // Store the message if the bookmarked shows is add 
-  const [message, setMessage] = useState("")
 
   // Search state
   const [searchActive, setSearchActive] = useState(false);
 
-  console.log(bookmarked)
+  const [bookmarkedShows, setBookmarkedShows] = useState();
 
   // If the user is logged in, get the user's bookmarked shows
-  /*
+
   useEffect(() => {
     const getBookmarkedShowsID = async () => {
       const { data, error } = await supabase
@@ -56,15 +50,10 @@ export default function Home({ trendings, allshows, user, bookmarked }) {
       getBookmarkedShowsID();
     }
   }, [session]);
-  */
 
   // If search state is active, show the data
   const checkSearchStatus = (status) => {
-    if (status) {
-      setSearchActive(true);
-    } else {
-      setSearchActive(false);
-    }
+    status ? setSearchActive(true) : setSearchActive(false);
   };
 
   // Function to change titles in images cards src
@@ -80,26 +69,11 @@ export default function Home({ trendings, allshows, user, bookmarked }) {
     return src;
   };
 
-  const pull_data = (data) => {
-    console.log(data)
-    setMessage(data)
-  }
-
-    
   return (
     <>
       <Head></Head>
 
-
-      <div className="flex items-center right-1/2 top-3 absolute p-4 mb-4 text-sm text-red  bg-white rounded-lg border-b-8" role="alert">
-        <svg className="inline flex-shrink-0 mr-3 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd"></path></svg>
-      <div>
-         <span className="font-medium">{message}</span> 
-      </div>
-    </div>
-    
       <section>
-        
         <SearchBar
           shows={"movies or TV series"}
           data={allshows}
@@ -121,6 +95,7 @@ export default function Home({ trendings, allshows, user, bookmarked }) {
                     image={`https://kmzgkstraazrxkyxaejh.supabase.co/storage/v1/object/public/thumbnails/${changeImageSrc(
                       title
                     )}/trending/large.jpg`}
+                    bookmarkShows={bookmarkedShows}
                   />
                 ))}
             </div>
@@ -143,7 +118,6 @@ export default function Home({ trendings, allshows, user, bookmarked }) {
                   year={year}
                   category={category}
                   classificao={rating}
-                  addMessage={pull_data}
                 />
               ))}
           </section>
@@ -161,7 +135,7 @@ export async function getServerSideProps({ req, res }) {
   if (!user) {
     console.log("Please login.");
     return { props: {}, redirect: { destination: "/login", permanent: false } };
-  } 
+  }
 
   console.log(user);
 

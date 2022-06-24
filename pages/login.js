@@ -14,7 +14,7 @@ export default function Login() {
   const [error, setError] = useState(null);
 
   // Loading state
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
 
   // useAuth from context
   const { session, signIn } = useAuth();
@@ -26,10 +26,9 @@ export default function Login() {
   const emailRef = useRef();
   const passwordRef = useRef();
 
-
   // Sign in the user
   const handleLogin = async (e) => {
-    setIsLoading(true)
+    setIsLoading(true);
     e.preventDefault();
 
     // Get the email and password from the form
@@ -39,10 +38,14 @@ export default function Login() {
     const { data, error } = await signIn({ email, password });
     setError(error);
     console.log(data);
-    console.log(error)
+    console.log(error);
 
-    data && router.push("/") 
-     setIsLoading(false)
+    setIsLoading(true);
+    if (error) {
+      setIsLoading(false);
+    }
+    router.push("/");
+    setIsLoading(false);
   };
 
   return (
@@ -77,21 +80,21 @@ export default function Login() {
               ref={passwordRef}
               required
             />
-             <button
-              className="mt-10 rounded-md bg-red py-2 hover:bg-white"
+            <button
+              className="mt-10 rounded-md bg-red py-2 hover:bg-white "
               type="submit"
             >
-            {isLoading ? (<LoadingSpinner color={`#FFF` }/> ) : (
-  <p>Login to your account</p>
-)
-}
-</button>
+              {isLoading ? (
+                <LoadingSpinner color={`#FFF`} />
+              ) : (
+                <p>Login to your account</p>
+              )}
+            </button>
             {error?.message && (
               <div className=" text-red pt-6">
-               <p> {error.message} </p>
+                <p> {error.message} </p>
                 <p> {`Please, verify your email or password`} </p>
-                </div>
-                
+              </div>
             )}
 
             <div className="py-6">
