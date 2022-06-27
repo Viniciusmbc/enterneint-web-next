@@ -10,7 +10,6 @@ import { supabase } from "../utils/supabaseClient";
 // Auth Context
 import { useAuth } from "../context/AuthContext";
 import { LoadingSpinner } from "./Icons";
-import AlertMessage from "./AlertMessage";
 
 export default function Cards({
   id,
@@ -62,7 +61,6 @@ export default function Cards({
       console.log(`Error: ${error}`);
     } else {
       setBookmarkedShowsId((prev) => new Set(prev).add(data.shows_id));
-      <AlertMessage message={`Added ${title} to bookmarked shows`} />;
       setIsLoading(false);
       setBookmark(true);
     }
@@ -84,7 +82,6 @@ export default function Cards({
         next.delete(id);
         return next;
       });
-      <AlertMessage message={`Removed ${title} to bookmarked shows`} />;
       setIsLoading(false);
       setBookmark(false);
     }
@@ -114,7 +111,7 @@ export default function Cards({
       <div className="relative h-28 md:h-36 lg:h-[174px]">
         <button
           onClick={() => handleBookmarked(id)}
-          role="b"
+          role="button"
           className=" flex items-center right-2 top-2 absolute bg-darkBlue/50  w-8 h-8 rounded-full z-10 md:right-4 md:top-4"
         >
           {isLoading ? (

@@ -9,6 +9,7 @@ export default function Trending({
   title,
   image,
   bookmarkShows,
+  handleBookmarked,
 }) {
   const [isLoading, setIsLoading] = useState(false);
   const [bookmarkedShowsId, setbookmarkedShowsId] = useState(bookmarkShows);

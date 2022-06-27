@@ -43,9 +43,10 @@ export default function Login() {
     setIsLoading(true);
     if (error) {
       setIsLoading(false);
+    } else {
+      router.push("/");
+      setIsLoading(false);
     }
-    router.push("/");
-    setIsLoading(false);
   };
 
   return (

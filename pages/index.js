@@ -20,9 +20,6 @@ import { getLayout } from "../components/NestedLayout";
 import { supabase } from "../utils/supabaseClient";
 
 export default function Home({ trendings, allshows, bookmarked }) {
-  // Auth
-  const { session, signOut } = useAuth();
-
   // Search state
   const [searchActive, setSearchActive] = useState(false);
 
@@ -30,6 +27,7 @@ export default function Home({ trendings, allshows, bookmarked }) {
 
   // If the user is logged in, get the user's bookmarked shows
 
+  /*
   useEffect(() => {
     const getBookmarkedShowsID = async () => {
       const { data, error } = await supabase
@@ -50,6 +48,7 @@ export default function Home({ trendings, allshows, bookmarked }) {
       getBookmarkedShowsID();
     }
   }, [session]);
+*/
 
   // If search state is active, show the data
   const checkSearchStatus = (status) => {
