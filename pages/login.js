@@ -44,8 +44,8 @@ export default function Login() {
     if (error) {
       setIsLoading(false);
     } else {
-      router.push("/");
       setIsLoading(false);
+      router.push("/");
     }
   };
 
@@ -86,7 +86,7 @@ export default function Login() {
               type="submit"
             >
               {isLoading ? (
-                <LoadingSpinner color={`#FFF`} />
+                <LoadingSpinner className="cursor-wait" color={`#FFF`} />
               ) : (
                 <p>Login to your account</p>
               )}

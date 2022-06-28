@@ -19,12 +19,13 @@ import Title from "../components/Title";
 import { supabase } from "../utils/supabaseClient";
 
 export default function Bookmarked({ data, bookmarkedShows, user }) {
+  console.log(bookmarkedShows);
   const bookmarkedMovies = bookmarkedShows?.filter(({ category }) => {
-    return category && category === "Movie";
+    return category === "Movie";
   });
 
   const bookmarkedTVseries = bookmarkedShows?.filter(({ category }) => {
-    return category && category === "TV Series";
+    return category === "TV Series";
   });
 
   console.log(bookmarkedShows.length, bookmarkedTVseries);
@@ -43,8 +44,11 @@ export default function Bookmarked({ data, bookmarkedShows, user }) {
 
   return (
     <>
-      <Head></Head>
-
+      <Head>
+        <title>Bookmarked Shows</title>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+      </Head>
       {bookmarkedShows.length === 0 ? (
         <Title title={"You don't have a bookmarked shows!"} />
       ) : (
@@ -59,9 +63,9 @@ export default function Bookmarked({ data, bookmarkedShows, user }) {
               <Title title={"Bookmarked Movies"} />
               <section className=" grid grid-cols-2 mx-4 gap-4 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
                 {bookmarkedMovies.map(
-                  ({ title, year, category, rating, id }) => (
+                  ({ title, year, category, rating, id }, index) => (
                     <Cards
-                      key={id}
+                      key={index}
                       id={id}
                       bookmarkedShows={data}
                       title={title}
@@ -82,9 +86,9 @@ export default function Bookmarked({ data, bookmarkedShows, user }) {
               />
               <section className=" grid grid-cols-2 mx-4 gap-4 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
                 {bookmarkedTVseries.map(
-                  ({ title, year, category, rating, id }) => (
+                  ({ title, year, category, rating, id }, index) => (
                     <Cards
-                      key={id}
+                      key={index}
                       id={id}
                       bookmarkedShows={data}
                       title={title}

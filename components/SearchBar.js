@@ -62,7 +62,7 @@ export default function SearchBar({ shows, data, onFocusHandler, title }) {
         </svg>
         <input
           placeholder={`Search for a ${shows}`}
-          className="bg-darkBlue text-white"
+          className="bg-darkBlue text-white  caret-red outline-offset-2 focus:border-0 placeholder:italic  w-60"
           type="search"
           onFocus={onFocus}
           onChange={onChange}

@@ -11,17 +11,10 @@ import { supabase } from "../utils/supabaseClient";
 import { useAuth } from "../context/AuthContext";
 import { LoadingSpinner } from "./Icons";
 
-export default function Cards({
-  id,
-  title,
-  year,
-  category,
-  classificao,
-  bookmarkedShows,
-}) {
+export default function Cards({ id, title, year, category, classificao }) {
   const [bookmarkedShowsId, setBookmarkedShowsId] = useState(new Set());
   const [bookmark, setBookmark] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Auth
   const { session, signOut } = useAuth();

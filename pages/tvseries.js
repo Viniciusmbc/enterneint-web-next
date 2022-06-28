@@ -38,33 +38,36 @@ export default function Series({ data, user, bookmarked }) {
   };
 
   return (
-    <>
-      <section className=" w-full">
-        <SearchBar
-          shows={"Series"}
-          data={data}
-          onFocusHandler={(status) => checkSearchStatus(status)}
-          title={"Series"}
-        />
+    <section className=" w-full">
+      <Head>
+        <title>TV Series</title>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+      </Head>
+      <SearchBar
+        shows={"Series"}
+        data={data}
+        onFocusHandler={(status) => checkSearchStatus(status)}
+        title={"Series"}
+      />
 
-        {!searchActive && (
-          <section className=" grid grid-cols-2 mx-4 gap-4 mb-14 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
-            {data.map(({ title, year, category, id, rating }) => (
-              <Cards
-                bookmarkedShows={bookmarked}
-                key={id}
-                id={id}
-                title={title}
-                year={year}
-                category={category}
-                classificao={rating}
-                addMessage={pull_data}
-              />
-            ))}
-          </section>
-        )}
-      </section>
-    </>
+      {!searchActive && (
+        <section className=" grid grid-cols-2 mx-4 gap-4 mb-14 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
+          {data.map(({ title, year, category, id, rating }) => (
+            <Cards
+              bookmarkedShows={bookmarked}
+              key={id}
+              id={id}
+              title={title}
+              year={year}
+              category={category}
+              classificao={rating}
+              addMessage={pull_data}
+            />
+          ))}
+        </section>
+      )}
+    </section>
   );
 }
 

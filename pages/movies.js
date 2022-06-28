@@ -28,7 +28,11 @@ export default function Movies({ data, bookmarked }) {
 
   return (
     <>
-      <Head></Head>
+      <Head>
+        <title>Movies</title>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+      </Head>
       <section className=" w-full">
         <SearchBar
           shows={"Movies"}
