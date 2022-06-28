@@ -1,34 +1,73 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Frontend Mentor - Entertainment web app solution
 
-## Getting Started
+This is a solution to the [Entertainment web app challenge on Frontend Mentor](https://www.frontendmentor.io/challenges/entertainment-web-app-J-UhgAW1X). Frontend Mentor challenges help you improve your coding skills by building realistic project.
 
-First, run the development server:
+## Table of contents
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+- [Overview](#overview)
+  - [The challenge](#the-challenge)
+  - [Screenshot](#screenshot)
+  - [Links](#links)
+- [My process](#my-process)
+  - [Built with](#built-with)
+  - [What I learned](#what-i-learned)
+  - [Continued development](#continued-development)
+  - [Useful resources](#useful-resources)
+- [Author](#author)
+- [Acknowledgments](#acknowledgments)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**Note: Delete this note and update the table of contents based on what sections you keep.**
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+## Overview
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+### The challenge
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+Users should be able to:
 
-## Learn More
+- View the optimal layout for the app depending on their device's screen size 
+- See hover states for all interactive elements on the page
+- Navigate between Home, Movies, TV Series, and Bookmarked Shows pages
+- Add/Remove bookmarks from all movies and TV series
+- Search for relevant shows on all pages
+- **Bonus**: Build this project as a full-stack application
+- **Bonus**: If you're building a full-stack app, we provide authentication screen (sign-up/login) designs if you'd like to create an auth flow
 
-To learn more about Next.js, take a look at the following resources:
+### Screenshot
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+![enterneint-web-next-frontendmentor vercel app_](https://user-images.githubusercontent.com/81455169/176265444-63747f39-ac2a-4ea2-ac53-af1929f661c9.png)
+![enterneint-web-next-frontendmentor vercel app_ (2)](https://user-images.githubusercontent.com/81455169/176266141-305947c8-0134-426b-9d72-6690cb63b3f3.png)
+![enterneint-web-next-frontendmentor vercel app_ (3)](https://user-images.githubusercontent.com/81455169/176266181-0f142637-36b0-4816-9021-ff6963fc4e24.png)
+![enterneint-web-next-frontendmentor vercel app_(iPhone XR)](https://user-images.githubusercontent.com/81455169/176266214-ec0d1a8f-8ddf-446a-9008-932d1ac1ed47.png)
+![enterneint-web-next-frontendmentor vercel app_](https://user-images.githubusercontent.com/81455169/176266235-0df81a20-95d5-4943-973e-5babc7178bce.png)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+### Links
 
-## Deploy on Vercel
+- Live Site URL: [https://enterneint-web-next-frontendmentor.vercel.app/](https://enterneint-web-next-frontendmentor.vercel.app/)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## My process
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+### Built with
+
+- Semantic HTML5 markup
+- Flexbox
+- CSS Grid
+- Mobile-first workflow
+- [React](https://reactjs.org/) - JS library
+- [Next.js](https://nextjs.org/) - React framework
+- [Supabase](https://supabase.com/) - Supabase to Backend
+- [TailwindCss](https://tailwindcss.com/) - For styles
+
+### What I learned
+
+I learned many thigns with this project: 
+
+- I learned about Postgresql (Schemas, tables, foreign keys, etc) and Supabase; Make a Searchbar with React hooks; Create React Context and the Auth flow; and other things in css and the Tailwindcss.
+
+### Useful resources
+
+- [Sergio DXA blog](https://sergiodxa.com/)) - This helped me for understand Nextjs and others things about SSR. I really liked this pattern and will use it going forward.
+
+## Author
+
+- Frontend Mentor - [@Viniciusmbc](https://www.frontendmentor.io/profile/Viniciusmbc)
+- Linkedin - Vinicius Menna Barreto Caceres (https://www.linkedin.com/in/vinicius-menna-barreto-caceres)
