@@ -4,6 +4,8 @@ import { useRouter } from "next/router";
 
 // React Hooks
 import { useRef, useState } from "react";
+
+// Icons
 import { LoadingSpinner } from "../components/Icons";
 
 // import context
@@ -64,8 +66,7 @@ export default function Login() {
 
           <form
             onSubmit={handleLogin}
-            className="mx-auto flex flex-col rounded-md bg-semiDarkBlue px-10"
-          >
+            className="mx-auto flex flex-col rounded-md bg-semiDarkBlue px-10">
             <label className="mt-6 text-2xl text-white">Login</label>
             <input
               type="email"
@@ -83,8 +84,7 @@ export default function Login() {
             />
             <button
               className="mt-10 rounded-md bg-red py-2 hover:bg-white "
-              type="submit"
-            >
+              type="submit">
               {isLoading ? (
                 <LoadingSpinner className="cursor-wait" color={`#FFF`} />
               ) : (

@@ -1,9 +1,6 @@
 // NextJS
 import Head from "next/head";
 
-// SWR
-import useSWR from "swr";
-
 // React Hooks
 import { useEffect, useState } from "react";
 
