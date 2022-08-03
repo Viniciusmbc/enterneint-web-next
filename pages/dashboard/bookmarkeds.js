@@ -5,18 +5,18 @@ import Head from "next/head";
 import { useState, useEffect } from "react";
 
 // Auth Context
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 
 // Layout
-import { getLayout } from "../components/NestedLayout";
+import { getLayout } from "../../components/NestedLayout";
 
 // Components
-import SearchBar from "../components/SearchBar";
-import Cards from "../components/Cards";
-import Title from "../components/Title";
+import SearchBar from "../../components/SearchBar";
+import Cards from "../../components/Cards";
+import Title from "../../components/Title";
 
 // Supabase
-import { supabase } from "../utils/supabaseClient";
+import { supabase } from "../../utils/supabaseClient";
 
 export default function Bookmarked({ data, bookmarkedShows, user }) {
   console.log(bookmarkedShows);
@@ -113,12 +113,6 @@ export async function getServerSideProps({ req, res }) {
   // Get user by cookie
   const { user } = await supabase.auth.api.getUserByCookie(req);
   console.log(user);
-
-  // If user not authenticaded, redirect
-  if (!user) {
-    console.log("Please login.");
-    return { props: {}, redirect: { destination: "/login", permanent: false } };
-  }
 
   // Get all favorite shows
   const { data, error } = await supabase

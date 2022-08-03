@@ -8,14 +8,14 @@ import useSWR from "swr";
 import { useEffect, useState } from "react";
 
 // components
-import Cards from "../components/Cards";
-import SearchBar from "../components/SearchBar";
+import Cards from "../../components/Cards";
+import SearchBar from "../../components/SearchBar";
 
 // layouts
-import { getLayout } from "../components/NestedLayout";
+import { getLayout } from "../../components/NestedLayout";
 
 // supabase
-import { supabase } from "../utils/supabaseClient";
+import { supabase } from "../../utils/supabaseClient";
 
 export default function Series({ data, user, bookmarked }) {
   const [searchActive, setSearchActive] = useState(false);

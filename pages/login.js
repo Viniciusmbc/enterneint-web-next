@@ -30,8 +30,8 @@ export default function Login() {
 
   // Sign in the user
   const handleLogin = async (e) => {
-    setIsLoading(true);
     e.preventDefault();
+    setIsLoading(true);
 
     // Get the email and password from the form
     const email = emailRef.current.value;
@@ -45,10 +45,9 @@ export default function Login() {
     setIsLoading(true);
     if (error) {
       setIsLoading(false);
-    } else {
-      setIsLoading(false);
-      router.push("/");
     }
+    setIsLoading(false);
+    router.push("/dashboard");
   };
 
   return (

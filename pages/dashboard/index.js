@@ -5,19 +5,18 @@ import Head from "next/head";
 import { useEffect, useState, useRef } from "react";
 
 // Auth Context
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "/context/AuthContext";
 
 // Components
-import Cards from "../components/Cards";
-import Trending from "../components/Trending";
-import SearchBar from "../components/SearchBar";
-import AlertMessage from "../components/AlertMessage";
+import Cards from "/components/Cards";
+import Trending from "/components/Trending";
+import SearchBar from "/components/SearchBar";
 
 // Layouts
-import { getLayout } from "../components/NestedLayout";
+import { getLayout } from "/components/NestedLayout";
 
 // Supabase
-import { supabase } from "../utils/supabaseClient";
+import { supabase } from "/utils/supabaseClient";
 
 export default function Home({ trendings, allshows, bookmarked }) {
   // Search state
@@ -104,6 +103,8 @@ export default function Home({ trendings, allshows, bookmarked }) {
 export async function getServerSideProps({ req, res }) {
   // Get user by cookie
   const { user } = await supabase.auth.api.getUserByCookie(req);
+
+  console.log(user);
 
   // Get all shows
   const { data: allshows, error } = await supabase.from("Shows").select();

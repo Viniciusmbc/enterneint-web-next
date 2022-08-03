@@ -5,12 +5,12 @@ import Head from "next/head";
 import { useEffect, useState } from "react";
 
 // Components
-import Cards from "../components/Cards";
-import SearchBar from "../components/SearchBar";
-import { getLayout } from "../components/NestedLayout";
+import Cards from "../../components/Cards";
+import SearchBar from "../../components/SearchBar";
+import { getLayout } from "../../components/NestedLayout";
 
 // Supabase
-import { supabase } from "../utils/supabaseClient";
+import { supabase } from "../../utils/supabaseClient";
 
 export default function Movies({ data, bookmarked }) {
   // Search state
