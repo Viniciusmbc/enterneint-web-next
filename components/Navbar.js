@@ -21,23 +21,25 @@ export default function Navbar() {
         <Link href={"/dashboard"}>
           <a>
             <HomeIcon
-              color={`${
-                router.pathname === "/dashboard/" ? "#FFF" : "#5A698F"
-              }`}
+              color={`${router.pathname === "/dashboard" ? "#FFF" : "#5A698F"}`}
             />
           </a>
         </Link>
         <Link href={"/dashboard/movies"}>
           <a>
             <MoviesIcon
-              color={`${router.pathname === "/movies" ? "#FFF" : "#5A698F"}`}
+              color={`${
+                router.pathname === "dashboard/movies" ? "#FFF" : "#5A698F"
+              }`}
             />
           </a>
         </Link>
         <Link href={"/dashboard/tvseries"}>
           <a>
             <TVIcon
-              color={`${router.pathname === "/tvseries" ? "#FFF" : "#5A698F"}`}
+              color={`${
+                router.pathname === "dashboard/tvseries" ? "#FFF" : "#5A698F"
+              }`}
             />
           </a>
         </Link>
@@ -45,7 +47,7 @@ export default function Navbar() {
           <a>
             <BookmarkIcon
               color={`${
-                router.pathname === "/bookmarkeds" ? "#FFF" : "#5A698F"
+                router.pathname === "dashboard/bookmarkeds" ? "#FFF" : "#5A698F"
               }`}
             />
           </a>
