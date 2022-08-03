@@ -13,15 +13,15 @@ export async function middleware(request: NextRequest) {
       if (sbtoken) {
         return NextResponse.rewrite(new URL('/dashboard', request.url))
       }
-      return NextResponse.rewrite(new URL('/login', request.url))
+    
     }
 
   if (request.nextUrl.pathname.startsWith('/dashboard')) {
     if (sbtoken) {
-      return NextResponse.rewrite(new URL('/dashboard', request.url))
+      const url = request.nextUrl.clone()
+      console.log(url)
+      return NextResponse.rewrite(url)
     }
-    console.log(sbtoken, user)
-  
 
     return NextResponse.rewrite(new URL('/login', request.url))
 }
