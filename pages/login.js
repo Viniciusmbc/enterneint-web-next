@@ -83,7 +83,8 @@ export default function Login() {
             />
             <button
               className="mt-10 rounded-md bg-red py-2 hover:bg-white "
-              type="submit">
+              type="submit"
+              disabled={isLoading}>
               {isLoading ? (
                 <LoadingSpinner className="cursor-wait" color={`#FFF`} />
               ) : (

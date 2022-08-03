@@ -10,10 +10,13 @@ export default function Signup() {
   // Router
   const router = useRouter();
 
+  // Loading state
+  const [isLoading, setIsLoading] = useState(false);
+
   // useRef to store the input element
   const emailRef = useRef();
   const passwordRef = useRef();
-  const passwordRepeatRef = useRef()
+  const passwordRepeatRef = useRef();
 
   // Auth
   const { signUp } = useAuth();
@@ -23,6 +26,7 @@ export default function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
     // Get the email and password from the form
     const email = emailRef.current.value;
@@ -32,20 +36,20 @@ export default function Signup() {
     // Get error from supabase auth
     const { error } = await signUp({ email, password });
 
-    console.log(error)
+    console.log(error);
 
-    if( password != passwordRepeat) {
-      return setError(`Passwords don't match`)
+    if (password != passwordRepeat) {
+      return setError(`Passwords don't match`);
     }
 
     if (error) {
       setError(error.message);
-    } else {
-      router.push("/");
+      setIsLoading(false);
+      return;
     }
+    router.push("/dashboard");
+    setIsLoading(false);
   };
-
-  
 
   return (
     <div className="min-h-screen  bg-darkBlue">
@@ -61,8 +65,7 @@ export default function Signup() {
           </div>
           <form
             onSubmit={handleSubmit}
-            className="mx-auto flex w-80 flex-col rounded-md bg-semiDarkBlue px-10"
-          >
+            className="mx-auto flex w-80 flex-col rounded-md bg-semiDarkBlue px-10">
             <h1 className="mt-6 text-2xl text-white">Sign Up</h1>
             <input
               required
@@ -85,19 +88,17 @@ export default function Signup() {
               className="mt-6 border-b-2 border-greyishBlue bg-semiDarkBlue py-2 text-white"
               ref={passwordRepeatRef}
             />
-
             <button
               className="mt-10 rounded-md bg-red hover:bg-white py-2"
               type="submit"
-            >
+              disabled={isLoading}>
               Create an account
-            </button> {error && (
+            </button>{" "}
+            {error && (
               <div className=" text-red pt-6 text-center">
-               <p> {error} ! </p>
-                </div>
-                
+                <p> {error} ! </p>
+              </div>
             )}
-
             <div className="mx-auto py-6">
               <p className="text-white">
                 Alread have an account?

@@ -7,15 +7,16 @@ import { supabase } from "./utils/supabaseClient";
 export async function middleware(request) {
   const user = await supabase.auth.api.getUserByCookie(request);
   const cookies = request.cookies.entries().next();
-  console.log(cookies.value);
+  console.log(request.cookies.entries().next());
   if (request.nextUrl.pathname === "/") {
     if (cookies.value !== undefined) {
       const sbtoken = cookies?.value[1];
 
-      sbtoken
+      return sbtoken
         ? NextResponse.rewrite(new URL("/dashboard", request.url))
         : NextResponse.rewrite(new URL("/login", request.url));
     }
+    return NextResponse.rewrite(new URL("/login", request.url));
   }
 
   if (request.nextUrl.pathname.startsWith("/dashboard")) {
