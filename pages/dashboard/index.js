@@ -18,7 +18,7 @@ import { getLayout } from "/components/NestedLayout";
 // Supabase
 import { supabase } from "/utils/supabaseClient";
 
-export default function Home({ trendings, allshows, bookmarked }) {
+export default function Home({ trendings, allshows, userId }) {
   // Search state
   const [searchActive, setSearchActive] = useState(false);
 
@@ -57,43 +57,41 @@ export default function Home({ trendings, allshows, bookmarked }) {
       />
 
       {!searchActive && (
-        <>
+        <section>
           <h1 className=" pl-4 text-xl text-white mb-4">Trending</h1>
-          <div className="flex  w-full overflow-x-auto">
-            {trendings &&
-              trendings.map(({ title, year, category, rating }, index) => (
+          <article className="flex  w-full overflow-x-auto">
+            {!!trendings &&
+              trendings.map(({ id, title, year, category, rating }) => (
                 <Trending
-                  key={index}
+                  key={id}
+                  id={id}
                   title={title}
                   year={year}
                   category={category}
                   rating={rating}
-                  image={`https://kmzgkstraazrxkyxaejh.supabase.co/storage/v1/object/public/thumbnails/${changeImageSrc(
-                    title
-                  )}/trending/large.jpg`}
-                  bookmarkShows={bookmarkedShows}
+                  userId={userId}
                 />
               ))}
-          </div>
+          </article>
 
-          <h2 className="text-white text-xl my-6 ml-4">Recommended for you</h2>
-        </>
-      )}
+          <h2 className="text-white mt-10 mb-8 text-xl ml-4">
+            Recommended for you
+          </h2>
 
-      {!searchActive && (
-        <section className=" grid grid-cols-2 mx-4 gap-4 mb-14 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
-          {allshows &&
-            allshows.map(({ id, title, year, category, rating }) => (
-              <Cards
-                bookmarkedShows={bookmarked}
-                key={id}
-                id={id}
-                title={title}
-                year={year}
-                category={category}
-                classificao={rating}
-              />
-            ))}
+          <article className=" grid grid-cols-2 mx-4 gap-4 mb-14 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
+            {!!allshows &&
+              allshows.map(({ id, title, year, category, rating }) => (
+                <Cards
+                  key={id}
+                  id={id}
+                  title={title}
+                  year={year}
+                  category={category}
+                  rating={rating}
+                  userId={userId}
+                />
+              ))}
+          </article>
         </section>
       )}
     </section>
@@ -103,8 +101,6 @@ export default function Home({ trendings, allshows, bookmarked }) {
 export async function getServerSideProps({ req, res }) {
   // Get user by cookie
   const { user } = await supabase.auth.api.getUserByCookie(req);
-
-  console.log(user);
 
   // Get all shows
   const { data: allshows, error } = await supabase.from("Shows").select();
@@ -119,15 +115,9 @@ export async function getServerSideProps({ req, res }) {
     .select()
     .eq("isTrending", true);
 
-  // Get bookmarked shows
-  const { data: bookmarked } = await supabase
-    .from("userfavoriteshows")
-    .select("shows_id, Shows(*)")
-    .eq("user_id", user.id);
-
   return {
     props: {
-      user,
+      userId: user.id,
       allshows,
       trendings,
       bookmarked,

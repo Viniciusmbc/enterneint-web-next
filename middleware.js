@@ -9,7 +9,7 @@ export async function middleware(request) {
   const cookies = request.cookies.entries().next();
   console.log(request.cookies.entries().next());
   if (request.nextUrl.pathname === "/") {
-    if (cookies.value !== undefined) {
+    if (cookies.value !== undefined && !user.error) {
       const sbtoken = cookies?.value[1];
 
       return sbtoken

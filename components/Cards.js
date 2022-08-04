@@ -11,11 +11,12 @@ import { supabase } from "../utils/supabaseClient";
 import { useAuth } from "../context/AuthContext";
 import { LoadingSpinner } from "./Icons";
 
-export default function Cards({ id, title, year, category, classificao }) {
+export default function Cards({ id, title, year, category, rating, userId }) {
   const [bookmarkedShowsId, setBookmarkedShowsId] = useState(new Set());
   const [bookmark, setBookmark] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
+  console.log(userId);
   // Auth
   const { session, signOut } = useAuth();
 
@@ -25,18 +26,17 @@ export default function Cards({ id, title, year, category, classificao }) {
       const { data, error } = await supabase
         .from("userfavoriteshows")
         .select("*")
-        .eq("user_id", session.user.id);
+        .eq("user_id", userId);
       if (error) {
         console.log(`Error: ${error}`);
-      } else {
-        setIsLoading(false);
-        const id = data.map((item) => item.shows_id && item.shows_id);
-        setBookmarkedShowsId(new Set(id));
       }
+      setIsLoading(false);
+      const id = data.map((item) => item.shows_id && item.shows_id);
+      setBookmarkedShowsId(new Set(id));
     };
 
-    session?.user.id ? getData() && setIsLoading(false) : setIsLoading(true);
-  }, [session]);
+    userId ? getData() && setIsLoading(false) : setIsLoading(true);
+  }, [userId]);
 
   // console.log(`user: ${session?.user.id ?? "no user"}`);
 
@@ -46,17 +46,16 @@ export default function Cards({ id, title, year, category, classificao }) {
     const { data, error } = await supabase
       .from("userfavoriteshows")
       .insert({
-        user_id: session.user.id,
+        user_id: userId,
         shows_id: id,
       })
       .single();
     if (error) {
       console.log(`Error: ${error}`);
-    } else {
-      setBookmarkedShowsId((prev) => new Set(prev).add(data.shows_id));
-      setIsLoading(false);
-      setBookmark(true);
     }
+    setBookmarkedShowsId((prev) => new Set(prev).add(data.shows_id));
+    setIsLoading(false);
+    setBookmark(true);
   };
 
   // If user click on the bookmark button, remove the show from the user's bookmarked shows
@@ -69,15 +68,14 @@ export default function Cards({ id, title, year, category, classificao }) {
       .eq("shows_id", id);
     if (error) {
       console.log(`Error: ${error}`);
-    } else {
-      setBookmarkedShowsId((prev) => {
-        const next = new Set(prev);
-        next.delete(id);
-        return next;
-      });
-      setIsLoading(false);
-      setBookmark(false);
     }
+    setBookmarkedShowsId((prev) => {
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
+    setIsLoading(false);
+    setBookmark(false);
   };
 
   // If user click on the bookmark button, add the show to the user's bookmarked shows or delete it from the user's bookmarked shows
@@ -105,8 +103,7 @@ export default function Cards({ id, title, year, category, classificao }) {
         <button
           onClick={() => handleBookmarked(id)}
           role="button"
-          className=" flex items-center right-2 top-2 absolute bg-darkBlue/50  w-8 h-8 rounded-full z-10 md:right-4 md:top-4"
-        >
+          className=" flex items-center right-2 top-2 absolute bg-darkBlue/50  w-8 h-8 rounded-full z-10 md:right-4 md:top-4">
           {isLoading ? (
             <LoadingSpinner color={"#FFF"} />
           ) : bookmarkedShowsId.has(id) === true || bookmark ? (
@@ -114,8 +111,7 @@ export default function Cards({ id, title, year, category, classificao }) {
               className=" mx-auto"
               width="12"
               height="14"
-              xmlns="http://www.w3.org/2000/svg"
-            >
+              xmlns="http://www.w3.org/2000/svg">
               <path
                 d="m10.518.75.399 12.214-5.084-4.24-4.535 4.426L.75 1.036l9.768-.285Z"
                 stroke="#FFF"
@@ -128,8 +124,7 @@ export default function Cards({ id, title, year, category, classificao }) {
               className=" mx-auto"
               width="12"
               height="14"
-              xmlns="http://www.w3.org/2000/svg"
-            >
+              xmlns="http://www.w3.org/2000/svg">
               <path
                 d="m10.518.75.399 12.214-5.084-4.24-4.535 4.426L.75 1.036l9.768-.285Z"
                 stroke="#FFF"
@@ -164,7 +159,7 @@ export default function Cards({ id, title, year, category, classificao }) {
 
         <p className=" text-white/75 ml-2 text-xs">{category}</p>
         <div className=" bg-white rounded-full w-1 h-1 mx-2"></div>
-        <p className=" text-white/75 text-xs">{classificao}</p>
+        <p className=" text-white/75 text-xs">{rating}</p>
       </div>
       <p className="text-white text-sm font-medium  mt-1">{title}</p>
     </div>

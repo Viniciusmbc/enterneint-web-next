@@ -21,34 +21,32 @@ export default function Navbar() {
         <Link href={"/dashboard"}>
           <a>
             <HomeIcon
-              color={`${router.pathname === "/dashboard" ? "#FFF" : "#5A698F"}`}
+              pathname={router.pathname === "/dashboard" ? true : false}
             />
           </a>
         </Link>
         <Link href={"/dashboard/movies"}>
           <a>
             <MoviesIcon
-              color={`${
-                router.pathname === "dashboard/movies" ? "#FFF" : "#5A698F"
-              }`}
+              pathname={router.pathname === "/dashboard/movies" ? true : false}
             />
           </a>
         </Link>
         <Link href={"/dashboard/tvseries"}>
           <a>
             <TVIcon
-              color={`${
-                router.pathname === "dashboard/tvseries" ? "#FFF" : "#5A698F"
-              }`}
+              pathname={
+                router.pathname === "/dashboard/tvseries" ? true : false
+              }
             />
           </a>
         </Link>
         <Link href={"/dashboard/bookmarkeds/"}>
           <a>
             <BookmarkIcon
-              color={`${
-                router.pathname === "dashboard/bookmarkeds" ? "#FFF" : "#5A698F"
-              }`}
+              pathname={
+                router.pathname === "/dashboard/bookmarkeds" ? true : false
+              }
             />
           </a>
         </Link>
