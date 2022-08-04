@@ -12,7 +12,7 @@ import { getLayout } from "../../components/NestedLayout";
 // Supabase
 import { supabase } from "../../utils/supabaseClient";
 
-export default function Movies({ data, bookmarked }) {
+export default function Movies({ data, userId }) {
   // Search state
   const [searchActive, setSearchActive] = useState(false);
   const checkSearchStatus = (status) => {
@@ -40,17 +40,18 @@ export default function Movies({ data, bookmarked }) {
 
         {!searchActive && (
           <section className=" grid grid-cols-2 mx-4 gap-4 mb-14 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
-            {data.map(({ title, year, category, rating, id }) => (
-              <Cards
-                bookmarkedShows={bookmarked}
-                key={id}
-                id={id}
-                title={title}
-                year={year}
-                category={category}
-                classificao={rating}
-              />
-            ))}
+            {data &&
+              data.map(({ title, year, category, rating, id }) => (
+                <Cards
+                  key={id}
+                  id={id}
+                  title={title}
+                  year={year}
+                  category={category}
+                  rating={rating}
+                  userId={userId}
+                />
+              ))}
           </section>
         )}
       </section>
@@ -61,12 +62,6 @@ export default function Movies({ data, bookmarked }) {
 export async function getServerSideProps({ req, res }) {
   // Get user by cookie
   const { user } = await supabase.auth.api.getUserByCookie(req);
-
-  // If user not authenticaded, redirect
-  if (!user) {
-    console.log("Please login.");
-    return { props: {}, redirect: { destination: "/login", permanent: false } };
-  }
 
   // Get Movies shows
   const { data } = await supabase
@@ -83,7 +78,7 @@ export async function getServerSideProps({ req, res }) {
   return {
     props: {
       data,
-      user,
+      userId: user.id,
       bookmarked,
     },
   };

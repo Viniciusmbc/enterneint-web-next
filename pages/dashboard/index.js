@@ -120,7 +120,6 @@ export async function getServerSideProps({ req, res }) {
       userId: user.id,
       allshows,
       trendings,
-      bookmarked,
     },
   };
 }
