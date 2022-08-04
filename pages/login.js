@@ -1,4 +1,5 @@
 // Nextjs
+import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -42,7 +43,6 @@ export default function Login() {
     console.log(data);
     console.log(error);
 
-    setIsLoading(true);
     if (error) {
       setIsLoading(false);
     }
@@ -52,6 +52,11 @@ export default function Login() {
 
   return (
     <div className=" min-h-screen bg-darkBlue">
+      <Head>
+        <title>Login</title>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+      </Head>
       <div className="mx-auto w-full max-w-md ">
         <div className="flex flex-col items-center space-y-6">
           <div className=" py-12">
@@ -65,7 +70,8 @@ export default function Login() {
 
           <form
             onSubmit={handleLogin}
-            className="mx-auto flex flex-col rounded-md bg-semiDarkBlue px-10">
+            className="mx-auto flex flex-col rounded-md bg-semiDarkBlue px-10"
+          >
             <label className="mt-6 text-2xl text-white">Login</label>
             <input
               type="email"
@@ -84,7 +90,8 @@ export default function Login() {
             <button
               className="mt-10 rounded-md bg-red py-2 hover:bg-white "
               type="submit"
-              disabled={isLoading}>
+              disabled={isLoading}
+            >
               {isLoading ? (
                 <LoadingSpinner className="cursor-wait" color={`#FFF`} />
               ) : (

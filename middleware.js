@@ -7,7 +7,7 @@ import { supabase } from "./utils/supabaseClient";
 export async function middleware(request) {
   const user = await supabase.auth.api.getUserByCookie(request);
   const cookies = request.cookies.entries().next();
-  console.log(request.cookies.entries().next());
+  console.log(request.cookies.entries().next().value ? "vdd" : "falso");
   if (request.nextUrl.pathname === "/") {
     if (cookies.value !== undefined && !user.error) {
       const sbtoken = cookies?.value[1];

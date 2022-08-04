@@ -27,9 +27,8 @@ export default function Series({ tvseries, userId }) {
   const checkSearchStatus = (status) => {
     if (status) {
       setSearchActive(true);
-    } else {
-      setSearchActive(false);
     }
+    return setSearchActive(false);
   };
 
   const pull_data = (data) => {
@@ -53,17 +52,18 @@ export default function Series({ tvseries, userId }) {
 
       {!searchActive && (
         <section className=" grid grid-cols-2 mx-4 gap-4 mb-14 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
-          {tvseries.map(({ title, year, category, id, rating }) => (
-            <Cards
-              key={id}
-              id={id}
-              title={title}
-              year={year}
-              category={category}
-              rating={rating}
-              userId={userId}
-            />
-          ))}
+          {tvseries &&
+            tvseries.map(({ title, year, category, id, rating }) => (
+              <Cards
+                key={id}
+                id={id}
+                title={title}
+                year={year}
+                category={category}
+                rating={rating}
+                userId={userId}
+              />
+            ))}
         </section>
       )}
     </section>

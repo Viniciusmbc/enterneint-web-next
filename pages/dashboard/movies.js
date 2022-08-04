@@ -18,9 +18,8 @@ export default function Movies({ data, userId }) {
   const checkSearchStatus = (status) => {
     if (status) {
       setSearchActive(true);
-    } else {
-      setSearchActive(false);
     }
+    return setSearchActive(false);
   };
 
   return (
@@ -69,17 +68,10 @@ export async function getServerSideProps({ req, res }) {
     .select()
     .eq("category", "Movie");
 
-  // Get bookmarked shows
-  const { data: bookmarked } = await supabase
-    .from("userfavoriteshows")
-    .select("shows_id")
-    .eq("user_id", user.id);
-
   return {
     props: {
       data,
       userId: user.id,
-      bookmarked,
     },
   };
 }

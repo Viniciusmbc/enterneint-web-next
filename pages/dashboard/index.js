@@ -1,11 +1,9 @@
 // Nextjs
 import Head from "next/head";
+import Image from "next/image";
 
 // React Hooks
-import { useEffect, useState, useRef } from "react";
-
-// Auth Context
-import { useAuth } from "/context/AuthContext";
+import { useState } from "react";
 
 // Components
 import Cards from "/components/Cards";
@@ -18,34 +16,43 @@ import { getLayout } from "/components/NestedLayout";
 // Supabase
 import { supabase } from "/utils/supabaseClient";
 
-export default function Home({ trendings, allshows, userId }) {
+// BlurURL Placeholder
+import { getPlaiceholder } from "plaiceholder";
+import { LoadingSpinner } from "../../components/Icons";
+
+// Image src
+import { changeImageSrc } from "../../utils/changeImageSrc";
+
+const getImagesFromPlaiceholders = (...classNames) =>
+  Promise.all(
+    classNames.map(async (className) => {
+      const { img } = await getPlaiceholder(extractImgSrc(className));
+
+      return { className, ...img };
+    })
+  );
+
+export default function Home({ trendings, allshows, userId, images }) {
   // Search state
   const [searchActive, setSearchActive] = useState(false);
-
-  const [bookmarkedShows, setBookmarkedShows] = useState();
 
   // If search state is active, show the data
   const checkSearchStatus = (status) => {
     status ? setSearchActive(true) : setSearchActive(false);
   };
 
-  // Function to change titles in images cards src
-  const changeImageSrc = (title) => {
-    if (title === "Earth’s Untouched") {
-      const earthsuntouched = "earths-untouched";
-      return earthsuntouched;
-    }
-    const src = title
-      .replace(/([^\w]+|\s+)/g, "-")
-      .replace("II", "2")
-      .toLowerCase();
-    return src;
-  };
+  if (!userId) {
+    return (
+      <div>
+        <LoadingSpinner />
+      </div>
+    );
+  }
 
   return (
     <section>
       <Head>
-        <title></title>
+        <title>Home</title>
         <meta charSet="utf-8" />
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
@@ -54,6 +61,7 @@ export default function Home({ trendings, allshows, userId }) {
         shows={"movies or TV series"}
         data={allshows}
         onFocusHandler={(status) => checkSearchStatus(status)}
+        userId={userId}
       />
 
       {!searchActive && (
@@ -94,6 +102,9 @@ export default function Home({ trendings, allshows, userId }) {
           </article>
         </section>
       )}
+      {images.map(({ className, ...image }) => (
+        <Image {...image} />
+      ))}
     </section>
   );
 }
@@ -102,8 +113,14 @@ export async function getServerSideProps({ req, res }) {
   // Get user by cookie
   const { user } = await supabase.auth.api.getUserByCookie(req);
 
+  console.log(user);
   // Get all shows
   const { data: allshows, error } = await supabase.from("Shows").select();
+
+  const images = await getImagesFromPlaiceholders(
+    "plaiceholder-[https://kmzgkstraazrxkyxaejh.supabase.co/storage/v1/object/public/thumbnails/asia-in-24-days/regular/medium.jpg]",
+    "plaiceholder-[https://kmzgkstraazrxkyxaejh.supabase.co/storage/v1/object/public/thumbnails/asia-in-24-days/regular/medium.jpg]"
+  );
 
   if (error) {
     throw new Error(error);
@@ -117,9 +134,10 @@ export async function getServerSideProps({ req, res }) {
 
   return {
     props: {
-      userId: user.id,
+      userId: user?.id,
       allshows,
       trendings,
+      images,
     },
   };
 }

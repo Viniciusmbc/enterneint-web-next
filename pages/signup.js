@@ -6,6 +6,9 @@ import { useAuth } from "../context/AuthContext";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
+// Head
+import Head from "next/dist/shared/lib/head";
+
 export default function Signup() {
   // Router
   const router = useRouter();
@@ -45,7 +48,6 @@ export default function Signup() {
     if (error) {
       setError(error.message);
       setIsLoading(false);
-      return;
     }
     router.push("/dashboard");
     setIsLoading(false);
@@ -53,6 +55,11 @@ export default function Signup() {
 
   return (
     <div className="min-h-screen  bg-darkBlue">
+      <Head>
+        <title>Sign Up</title>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+      </Head>
       <div className="mx-auto w-full max-w-md px-8">
         <div className="flex flex-col items-center space-y-6">
           <div className=" py-12">
@@ -65,7 +72,8 @@ export default function Signup() {
           </div>
           <form
             onSubmit={handleSubmit}
-            className="mx-auto flex w-80 flex-col rounded-md bg-semiDarkBlue px-10">
+            className="mx-auto flex w-80 flex-col rounded-md bg-semiDarkBlue px-10"
+          >
             <h1 className="mt-6 text-2xl text-white">Sign Up</h1>
             <input
               required
@@ -91,7 +99,8 @@ export default function Signup() {
             <button
               className="mt-10 rounded-md bg-red hover:bg-white py-2"
               type="submit"
-              disabled={isLoading}>
+              disabled={isLoading}
+            >
               Create an account
             </button>{" "}
             {error && (

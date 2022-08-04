@@ -18,8 +18,7 @@ import Title from "../../components/Title";
 // Supabase
 import { supabase } from "../../utils/supabaseClient";
 
-export default function Bookmarked({ data, bookmarkedShows, user }) {
-  console.log(bookmarkedShows);
+export default function Bookmarked({ bookmarkedShows, userId }) {
   const bookmarkedMovies = bookmarkedShows?.filter(({ category }) => {
     return category === "Movie";
   });
@@ -28,18 +27,15 @@ export default function Bookmarked({ data, bookmarkedShows, user }) {
     return category === "TV Series";
   });
 
-  console.log(bookmarkedShows.length, bookmarkedTVseries);
-
   // Search state
   const [searchActive, setSearchActive] = useState(false);
 
   // If search state is active, show the data
   const checkSearchStatus = (status) => {
     if (status) {
-      setSearchActive(true);
-    } else {
-      setSearchActive(false);
+      return setSearchActive(true);
     }
+    return setSearchActive(false);
   };
 
   return (
@@ -57,8 +53,9 @@ export default function Bookmarked({ data, bookmarkedShows, user }) {
             shows={"bookmarked shows"}
             data={bookmarkedShows}
             onFocusHandler={(status) => checkSearchStatus(status)}
+            userId={userId}
           />
-          {bookmarkedMovies.length > 0 && (
+          {!searchActive && bookmarkedMovies.length > 0 && (
             <>
               <Title title={"Bookmarked Movies"} />
               <section className=" grid grid-cols-2 mx-4 gap-4 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
@@ -67,38 +64,40 @@ export default function Bookmarked({ data, bookmarkedShows, user }) {
                     <Cards
                       key={index}
                       id={id}
-                      bookmarkedShows={data}
                       title={title}
                       year={year}
                       category={category}
-                      classificao={rating}
+                      rating={rating}
+                      userId={userId}
                     />
                   )
                 )}
               </section>
-            </>
-          )}
-          {bookmarkedTVseries.length > 0 && (
-            <>
-              <Title
-                title={"Bookmarked TV Series"}
-                bookmarkedtvSeries={bookmarkedMovies.length > 0 ? true : false}
-              />
-              <section className=" grid grid-cols-2 mx-4 gap-4 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
-                {bookmarkedTVseries.map(
-                  ({ title, year, category, rating, id }, index) => (
-                    <Cards
-                      key={index}
-                      id={id}
-                      bookmarkedShows={data}
-                      title={title}
-                      year={year}
-                      category={category}
-                      classificao={rating}
-                    />
-                  )
-                )}
-              </section>
+              {bookmarkedTVseries.length > 0 && (
+                <>
+                  <Title
+                    title={"Bookmarked TV Series"}
+                    bookmarkedtvSeries={
+                      bookmarkedMovies.length > 0 ? true : false
+                    }
+                  />
+                  <section className=" grid grid-cols-2 mx-4 gap-4 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
+                    {bookmarkedTVseries.map(
+                      ({ title, year, category, rating, id }, index) => (
+                        <Cards
+                          key={index}
+                          id={id}
+                          title={title}
+                          year={year}
+                          category={category}
+                          rating={rating}
+                          userId={userId}
+                        />
+                      )
+                    )}
+                  </section>
+                </>
+              )}
             </>
           )}
         </main>
@@ -128,12 +127,10 @@ export async function getServerSideProps({ req, res }) {
     return console.log(`Error: ${error}`);
   }
 
-  console.log(data);
-
   return {
     props: {
-      data,
-      user,
+      userId: user.id,
+
       bookmarkedShows,
     },
   };

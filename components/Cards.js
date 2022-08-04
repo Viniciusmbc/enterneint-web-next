@@ -16,7 +16,6 @@ export default function Cards({ id, title, year, category, rating, userId }) {
   const [bookmark, setBookmark] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  console.log(userId);
   // Auth
   const { session, signOut } = useAuth();
 
@@ -103,7 +102,8 @@ export default function Cards({ id, title, year, category, rating, userId }) {
         <button
           onClick={() => handleBookmarked(id)}
           role="button"
-          className=" flex items-center right-2 top-2 absolute bg-darkBlue/50  w-8 h-8 rounded-full z-10 md:right-4 md:top-4">
+          className=" flex items-center right-2 top-2 absolute bg-darkBlue/50  w-8 h-8 rounded-full z-10 md:right-4 md:top-4"
+        >
           {isLoading ? (
             <LoadingSpinner color={"#FFF"} />
           ) : bookmarkedShowsId.has(id) === true || bookmark ? (
@@ -111,7 +111,8 @@ export default function Cards({ id, title, year, category, rating, userId }) {
               className=" mx-auto"
               width="12"
               height="14"
-              xmlns="http://www.w3.org/2000/svg">
+              xmlns="http://www.w3.org/2000/svg"
+            >
               <path
                 d="m10.518.75.399 12.214-5.084-4.24-4.535 4.426L.75 1.036l9.768-.285Z"
                 stroke="#FFF"
@@ -124,7 +125,8 @@ export default function Cards({ id, title, year, category, rating, userId }) {
               className=" mx-auto"
               width="12"
               height="14"
-              xmlns="http://www.w3.org/2000/svg">
+              xmlns="http://www.w3.org/2000/svg"
+            >
               <path
                 d="m10.518.75.399 12.214-5.084-4.24-4.535 4.426L.75 1.036l9.768-.285Z"
                 stroke="#FFF"
@@ -141,6 +143,7 @@ export default function Cards({ id, title, year, category, rating, userId }) {
             changeImageSrc(title)
           )}/regular/medium.jpg`}
           alt={`${title} poster`}
+          placeholder="blur"
           layout="fill"
         />
       </div>
