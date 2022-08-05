@@ -16,22 +16,6 @@ import { getLayout } from "/components/NestedLayout";
 // Supabase
 import { supabase } from "/utils/supabaseClient";
 
-// BlurURL Placeholder
-import { getPlaiceholder } from "plaiceholder";
-import { LoadingSpinner } from "../../components/Icons";
-
-// Image src
-import { changeImageSrc } from "../../utils/changeImageSrc";
-
-const getImagesFromPlaiceholders = (...classNames) =>
-  Promise.all(
-    classNames.map(async (className) => {
-      const { img } = await getPlaiceholder(extractImgSrc(className));
-
-      return { className, ...img };
-    })
-  );
-
 export default function Home({ trendings, allshows, userId, images }) {
   // Search state
   const [searchActive, setSearchActive] = useState(false);
@@ -40,14 +24,6 @@ export default function Home({ trendings, allshows, userId, images }) {
   const checkSearchStatus = (status) => {
     status ? setSearchActive(true) : setSearchActive(false);
   };
-
-  if (!userId) {
-    return (
-      <div>
-        <LoadingSpinner />
-      </div>
-    );
-  }
 
   return (
     <section>
@@ -102,9 +78,6 @@ export default function Home({ trendings, allshows, userId, images }) {
           </article>
         </section>
       )}
-      {images.map(({ className, ...image }) => (
-        <Image {...image} />
-      ))}
     </section>
   );
 }
@@ -116,11 +89,6 @@ export async function getServerSideProps({ req, res }) {
   console.log(user);
   // Get all shows
   const { data: allshows, error } = await supabase.from("Shows").select();
-
-  const images = await getImagesFromPlaiceholders(
-    "plaiceholder-[https://kmzgkstraazrxkyxaejh.supabase.co/storage/v1/object/public/thumbnails/asia-in-24-days/regular/medium.jpg]",
-    "plaiceholder-[https://kmzgkstraazrxkyxaejh.supabase.co/storage/v1/object/public/thumbnails/asia-in-24-days/regular/medium.jpg]"
-  );
 
   if (error) {
     throw new Error(error);
@@ -137,7 +105,6 @@ export async function getServerSideProps({ req, res }) {
       userId: user?.id,
       allshows,
       trendings,
-      images,
     },
   };
 }
