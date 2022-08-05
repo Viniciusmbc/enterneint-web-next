@@ -13,6 +13,7 @@ module.exports = {
       black: "#000000",
       green: "#00FF00",
       yellow: "#FFFF00",
+      grey: "#d0d2d7",
     },
     extend: {
       screens: {
