@@ -48,7 +48,7 @@ export default function Login() {
     console.log(error);
 
     router.push("/dashboard");
-    setIsLoading(false);
+    setIsLoading(true);
   };
 
   return (
