@@ -19,12 +19,16 @@ export async function middleware(request) {
     return NextResponse.rewrite(new URL("/login", request.url));
   }
 
-  if (request.nextUrl.pathname.startsWith("/dashboard")) {
+  if (
+    request.nextUrl.pathname.startsWith("/dashboard") ||
+    request.nextUrl.pathname.startsWith("/login")
+  ) {
     const sbtoken = cookies?.value === undefined ? false : true;
+    console.log(sbtoken);
     if (sbtoken) {
       const url = request.nextUrl.clone();
       console.log(url);
-      return NextResponse.rewrite(url);
+      return NextResponse.rewrite(new URL("/dashboard", request.url));
     }
     return NextResponse.rewrite(new URL("/login", request.url));
   }
