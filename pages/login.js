@@ -41,20 +41,17 @@ export default function Login() {
     const { data, error } = await signIn({ email, password });
 
     if (error) {
-      setIsLoading(false);
       setError(error);
+      return setIsLoading(false);
     }
-    console.log(data);
-    console.log(error);
 
-    router.push("/dashboard");
-    setIsLoading(true);
+    return router.push("/dashboard");
   };
 
   useEffect(() => {
     // Prefetch the dashboard page
     router.prefetch("/dashboard");
-  }, []);
+  }, [router]);
 
   return (
     <div className=" min-h-screen bg-darkBlue">

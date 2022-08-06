@@ -20,33 +20,23 @@ export default function Navbar() {
       <div className="flex md:flex-col md:gap-y-10 md:mt-20 ">
         <Link href={"/dashboard"}>
           <a>
-            <HomeIcon
-              pathname={router.pathname === "/dashboard" ? true : false}
-            />
+            <HomeIcon pathname={router.pathname === "/dashboard"} />
           </a>
         </Link>
         <Link href={"/dashboard/movies"}>
           <a>
-            <MoviesIcon
-              pathname={router.pathname === "/dashboard/movies" ? true : false}
-            />
+            <MoviesIcon pathname={router.pathname === "/dashboard/movies"} />
           </a>
         </Link>
         <Link href={"/dashboard/tvseries"}>
           <a>
-            <TVIcon
-              pathname={
-                router.pathname === "/dashboard/tvseries" ? true : false
-              }
-            />
+            <TVIcon pathname={router.pathname === "/dashboard/tvseries"} />
           </a>
         </Link>
         <Link href={"/dashboard/bookmarkeds/"}>
           <a>
             <BookmarkIcon
-              pathname={
-                router.pathname === "/dashboard/bookmarkeds" ? true : false
-              }
+              pathname={router.pathname === "/dashboard/bookmarkeds"}
             />
           </a>
         </Link>

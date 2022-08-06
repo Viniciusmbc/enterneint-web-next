@@ -1,7 +1,7 @@
 // <root>/middleware.ts
 import { redirect } from "next/dist/server/api-utils";
 // eslint-disable-next-line @next/next/no-server-import-in-page
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { supabase } from "./utils/supabaseClient";
 
 export async function middleware(request) {
@@ -27,7 +27,6 @@ export async function middleware(request) {
     console.log(sbtoken);
     if (sbtoken) {
       const url = request.nextUrl.clone();
-      console.log(url);
       return NextResponse.rewrite(new URL("/dashboard", request.url));
     }
     return NextResponse.rewrite(new URL("/login", request.url));
