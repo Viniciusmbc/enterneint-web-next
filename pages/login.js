@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 // React Hooks
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 
 // Icons
 import { LoadingSpinner } from "../components/Icons";
@@ -50,6 +50,11 @@ export default function Login() {
     router.push("/dashboard");
     setIsLoading(true);
   };
+
+  useEffect(() => {
+    // Prefetch the dashboard page
+    router.prefetch("/dashboard");
+  }, []);
 
   return (
     <div className=" min-h-screen bg-darkBlue">
