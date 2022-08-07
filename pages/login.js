@@ -20,7 +20,7 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
 
   // useAuth from context
-  const { session, signIn } = useAuth();
+  const { signIn } = useAuth();
 
   // Router
   const router = useRouter();
