@@ -46,7 +46,6 @@ export default function SearchBar({
         onFocusHandler(false);
         setQuery("");
         setResults([]);
-        window.removeEventListener("click", onClick);
       }
     },
     [onFocusHandler]

@@ -4,13 +4,13 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 // React Hooks
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 
 // Icons
 import { LoadingSpinner } from "../components/Icons";
 
-// import context
-import { useAuth } from "../context/AuthContext";
+// supabase
+import { supabase } from "../utils/supabaseClient";
 
 export default function Login() {
   // Error state
@@ -18,9 +18,6 @@ export default function Login() {
 
   // Loading state
   const [isLoading, setIsLoading] = useState(false);
-
-  // useAuth from context
-  const { signIn } = useAuth();
 
   // Router
   const router = useRouter();
@@ -30,7 +27,7 @@ export default function Login() {
   const passwordRef = useRef();
 
   // Sign in the user
-  const handleLogin = async (e) => {
+  const handleLogin = useCallback(async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
@@ -38,6 +35,7 @@ export default function Login() {
     const email = emailRef.current.value;
     const password = passwordRef.current.value;
 
+    const signIn = (data) => supabase.auth.signIn(data);
     const { data, error } = await signIn({ email, password });
 
     if (error) {
@@ -45,13 +43,14 @@ export default function Login() {
       return setIsLoading(false);
     }
 
-    return router.push("/dashboard");
-  };
+    setIsLoading(false);
+    return router.push("/dashboard/movies");
+  }, []);
 
   useEffect(() => {
     // Prefetch the dashboard page
-    router.prefetch("/dashboard");
-  }, [router]);
+    router.prefetch("/dashboard/movies");
+  }, []);
 
   return (
     <div className=" min-h-screen bg-darkBlue">
@@ -73,12 +72,15 @@ export default function Login() {
 
           <form
             onSubmit={handleLogin}
-            className="mx-auto flex flex-col rounded-md bg-semiDarkBlue px-10">
+            className="mx-auto flex flex-col rounded-md bg-semiDarkBlue px-10"
+          >
             <label className="mt-6 text-2xl text-white">Login</label>
             <input
               type="email"
               placeholder="Email address"
               className="mt-10 border-b-2 border-greyishBlue bg-semiDarkBlue py-2 text-white"
+              id="email"
+              name="email"
               ref={emailRef}
               required
             />
@@ -87,12 +89,15 @@ export default function Login() {
               placeholder="Password"
               className="mt-6 border-b-2 border-greyishBlue bg-semiDarkBlue py-2 text-white"
               ref={passwordRef}
+              name="password"
+              id="password"
               required
             />
             <button
               className="mt-10 rounded-md bg-red py-2 hover:bg-white disabled:bg-greyishBlue disabled:cursor-not-allowed "
               type="submit"
-              disabled={isLoading}>
+              disabled={isLoading}
+            >
               {isLoading ? (
                 <LoadingSpinner className="cursor-wait" color={`#FFF`} />
               ) : (

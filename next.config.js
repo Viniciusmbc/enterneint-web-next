@@ -5,6 +5,15 @@ const nextConfig = {
 
 module.exports = {
   ...nextConfig,
+  async redirects() {
+    return [
+      {
+        source: "/",
+        destination: "/dashboard", // Matched parameters can be used in the destination
+        permanent: true,
+      },
+    ];
+  },
   experimental: {
     images: {
       layoutRaw: true,
