@@ -19,7 +19,7 @@ import { getLayout } from "/components/NestedLayout";
 // Supabase
 import { supabase } from "/utils/supabaseClient";
 
-export default function Home({ trendings, allshows, userId, images }) {
+export default function Home({ trendings, allshows, userId }) {
   // Search state
   const [searchActive, setSearchActive] = useState(false);
 
@@ -28,7 +28,7 @@ export default function Home({ trendings, allshows, userId, images }) {
     status ? setSearchActive(true) : setSearchActive(false);
   };
 
-  console.log(images);
+  console.log(`allshows: ${allshows}`);
 
   return (
     <section>
@@ -90,7 +90,6 @@ export default function Home({ trendings, allshows, userId, images }) {
 export async function getServerSideProps({ req, res }) {
   // Get user by cookie
   const { user } = await supabase.auth.api.getUserByCookie(req);
-  console.log(user);
 
   // Get all shows
   const { data: allshows, error } = await supabase.from("Shows").select();

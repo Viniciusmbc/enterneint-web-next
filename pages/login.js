@@ -6,6 +6,9 @@ import { useRouter } from "next/router";
 // React Hooks
 import { useRef, useState, useEffect, useCallback } from "react";
 
+// Auth Context
+import { useAuth } from "/context/AuthContext";
+
 // Icons
 import { LoadingSpinner } from "../components/Icons";
 
@@ -13,6 +16,8 @@ import { LoadingSpinner } from "../components/Icons";
 import { supabase } from "../utils/supabaseClient";
 
 export default function Login() {
+  const { signIn } = useAuth();
+
   // Error state
   const [error, setError] = useState(null);
 
@@ -27,7 +32,7 @@ export default function Login() {
   const passwordRef = useRef();
 
   // Sign in the user
-  const handleLogin = useCallback(async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
@@ -35,21 +40,14 @@ export default function Login() {
     const email = emailRef.current.value;
     const password = passwordRef.current.value;
 
-    const signIn = (data) => supabase.auth.signIn(data);
     const { data, error } = await signIn({ email, password });
 
-    if (error) {
-      setError(error);
-      return setIsLoading(false);
-    }
-
-    setIsLoading(false);
-    return router.push("/dashboard/movies");
-  }, []);
+    return router.push("/");
+  };
 
   useEffect(() => {
     // Prefetch the dashboard page
-    router.prefetch("/dashboard/movies");
+    router.prefetch("/");
   }, []);
 
   return (
@@ -72,8 +70,7 @@ export default function Login() {
 
           <form
             onSubmit={handleLogin}
-            className="mx-auto flex flex-col rounded-md bg-semiDarkBlue px-10"
-          >
+            className="mx-auto flex flex-col rounded-md bg-semiDarkBlue px-10">
             <label className="mt-6 text-2xl text-white">Login</label>
             <input
               type="email"
@@ -96,8 +93,7 @@ export default function Login() {
             <button
               className="mt-10 rounded-md bg-red py-2 hover:bg-white disabled:bg-greyishBlue disabled:cursor-not-allowed "
               type="submit"
-              disabled={isLoading}
-            >
+              disabled={isLoading}>
               {isLoading ? (
                 <LoadingSpinner className="cursor-wait" color={`#FFF`} />
               ) : (
