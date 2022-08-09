@@ -13,22 +13,13 @@ import SearchBar from "/components/SearchBar";
 // Change IMG src
 import { changeImageSrc } from "../../utils/changeImageSrc";
 
-// Plaiceholder blur
-import { getPlaiceholder } from "plaiceholder";
 // Layouts
 import { getLayout } from "/components/NestedLayout";
 
 // Supabase
 import { supabase } from "/utils/supabaseClient";
-import { data } from "autoprefixer";
 
-export default function Home({
-  trendings,
-  allshows,
-  userId,
-  src,
-  blurDataURL,
-}) {
+export default function Home({ trendings, allshows, userId, images }) {
   // Search state
   const [searchActive, setSearchActive] = useState(false);
 
@@ -36,6 +27,8 @@ export default function Home({
   const checkSearchStatus = (status) => {
     status ? setSearchActive(true) : setSearchActive(false);
   };
+
+  console.log(images);
 
   return (
     <section>
@@ -85,14 +78,7 @@ export default function Home({
                   category={category}
                   rating={rating}
                   userId={userId}
-                >
-                  <Image
-                    src={src}
-                    blurDataURL={blurDataURL}
-                    alt={`${title} poster`}
-                    placeholder="blur"
-                  />
-                </Cards>
+                />
               ))}
           </article>
         </section>
@@ -104,36 +90,14 @@ export default function Home({
 export async function getServerSideProps({ req, res }) {
   // Get user by cookie
   const { user } = await supabase.auth.api.getUserByCookie(req);
-
   console.log(user);
+
   // Get all shows
   const { data: allshows, error } = await supabase.from("Shows").select();
 
   if (error) {
     throw new Error(error);
   }
-
-  const images = await Promise.all(
-    allshows.map(async (src) => {
-      const { base64, img } = await getPlaiceholder(
-        `https://kmzgkstraazrxkyxaejh.supabase.co/storage/v1/object/public/thumbnails/${changeImageSrc(
-          src.title
-        )}/regular/small.jpg`
-      );
-
-      return {
-        ...img,
-        alt: `${src.title} poster`,
-        title: "Photo from Unsplash",
-        blurDataURL: base64,
-      };
-    })
-  ).then((values) => values);
-
-  const src = images.map(({ src }) => src);
-  const blurDataURL = images.map(({ blurDataURL }) => blurDataURL);
-
-  console.log(typeof src);
 
   // Get trending shows
   const { data: trendings } = await supabase
@@ -143,8 +107,6 @@ export async function getServerSideProps({ req, res }) {
 
   return {
     props: {
-      src,
-      blurDataURL,
       userId: user?.id,
       allshows,
       trendings,
