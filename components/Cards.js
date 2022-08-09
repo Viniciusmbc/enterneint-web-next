@@ -4,13 +4,18 @@ import Image from "next/image";
 // React Hooks
 import { useEffect, useState } from "react";
 
+// Auth Context
+import { useAuth } from "/context/AuthContext";
+
 // supabase
 import { supabase } from "../utils/supabaseClient";
 
 // Icons
 import { LoadingSpinner } from "./Icons";
 
-export default function Cards({ id, title, year, category, rating, userId }) {
+export default function Cards({ id, title, year, category, rating }) {
+  const { session } = useAuth();
+
   const [bookmarkedShowsId, setBookmarkedShowsId] = useState(new Set());
   const [bookmark, setBookmark] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -24,7 +29,7 @@ export default function Cards({ id, title, year, category, rating, userId }) {
       const { data, error } = await supabase
         .from("userfavoriteshows")
         .select("*")
-        .eq("user_id", userId);
+        .eq("user_id", session?.user.id);
       if (error) {
         console.log(`Error: ${error}`);
       }
@@ -33,8 +38,8 @@ export default function Cards({ id, title, year, category, rating, userId }) {
       setBookmarkedShowsId(new Set(id));
     };
 
-    userId ? getData() && setIsLoading(false) : setIsLoading(true);
-  }, [userId]);
+    session.user.id ? getData() && setIsLoading(false) : setIsLoading(true);
+  }, [session.user.id]);
 
   // console.log(`user: ${session?.user.id ?? "no user"}`);
 
@@ -44,7 +49,7 @@ export default function Cards({ id, title, year, category, rating, userId }) {
     const { data, error } = await supabase
       .from("userfavoriteshows")
       .insert({
-        user_id: userId,
+        user_id: session?.user.id,
         shows_id: id,
       })
       .single();
@@ -62,7 +67,7 @@ export default function Cards({ id, title, year, category, rating, userId }) {
     const { data, error } = await supabase
       .from("userfavoriteshows")
       .delete()
-      .eq("user_id", userId)
+      .eq("user_id", session?.user.id)
       .eq("shows_id", id);
     if (error) {
       console.log(`Error: ${error}`);

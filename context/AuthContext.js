@@ -16,15 +16,8 @@ export const AuthProvider = ({ children }) => {
     // Listen for changes on auth state (logged in, signed out, etc.)
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      async (session) => {
         setSession(session);
-        await fetch("/api/auth", {
-          method: "Post",
-          body: JSON.stringify({ event, session }),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }).then((res) => res.json());
       }
     );
     return () => {

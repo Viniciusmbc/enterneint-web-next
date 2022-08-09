@@ -41,13 +41,17 @@ export default function Login() {
     const password = passwordRef.current.value;
 
     const { data, error } = await signIn({ email, password });
+    if (error) {
+      setError(error);
+      return setIsLoading(false);
+    }
 
-    return router.push("/");
+    router.push("/dashboard");
   };
 
   useEffect(() => {
     // Prefetch the dashboard page
-    router.prefetch("/");
+    router.prefetch("/dashboard");
   }, []);
 
   return (

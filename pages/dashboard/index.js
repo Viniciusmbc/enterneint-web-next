@@ -5,6 +5,9 @@ import Image from "next/image";
 // React Hooks
 import { useState } from "react";
 
+// Auth Context
+import { useAuth } from "/context/AuthContext";
+
 // Components
 import Cards from "/components/Cards";
 import Trending from "/components/Trending";
@@ -19,7 +22,11 @@ import { getLayout } from "/components/NestedLayout";
 // Supabase
 import { supabase } from "/utils/supabaseClient";
 
-export default function Home({ trendings, allshows, userId }) {
+export default function Home({ trendings, allshows }) {
+  const { session } = useAuth();
+
+  console.log(session);
+
   // Search state
   const [searchActive, setSearchActive] = useState(false);
 
@@ -28,7 +35,9 @@ export default function Home({ trendings, allshows, userId }) {
     status ? setSearchActive(true) : setSearchActive(false);
   };
 
-  console.log(`allshows: ${allshows}`);
+  if (!session) {
+    return <div>You are not logged in</div>;
+  }
 
   return (
     <section>
@@ -42,7 +51,7 @@ export default function Home({ trendings, allshows, userId }) {
         shows={"movies or TV series"}
         data={allshows}
         onFocusHandler={(status) => checkSearchStatus(status)}
-        userId={userId}
+        userId={session.user.id}
       />
 
       {!searchActive && (
@@ -58,7 +67,7 @@ export default function Home({ trendings, allshows, userId }) {
                   year={year}
                   category={category}
                   rating={rating}
-                  userId={userId}
+                  userId={session.user.id}
                 />
               ))}
           </article>
@@ -77,7 +86,6 @@ export default function Home({ trendings, allshows, userId }) {
                   year={year}
                   category={category}
                   rating={rating}
-                  userId={userId}
                 />
               ))}
           </article>
@@ -88,9 +96,6 @@ export default function Home({ trendings, allshows, userId }) {
 }
 
 export async function getServerSideProps({ req, res }) {
-  // Get user by cookie
-  const { user } = await supabase.auth.api.getUserByCookie(req);
-
   // Get all shows
   const { data: allshows, error } = await supabase.from("Shows").select();
 
@@ -106,7 +111,6 @@ export async function getServerSideProps({ req, res }) {
 
   return {
     props: {
-      userId: user?.id,
       allshows,
       trendings,
     },
