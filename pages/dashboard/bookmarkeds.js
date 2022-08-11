@@ -37,23 +37,26 @@ export default function Bookmarkeds() {
         .from("userfavoriteshows")
         .select("shows_id, Shows(*)")
         .eq("user_id", session?.user.id);
-      data.length === 0
+
+      console.log(data);
+      data && data.length === 0
         ? setBookmarkedShows([false])
-        : setBookmarkedShows(data);
+        : setBookmarkedShows(
+            data.map(({ Shows }) => {
+              return Shows;
+            })
+          );
 
       if (error) {
         return console.log(`Error: ${error}`);
       }
-      const bookmarkedShows = data.map(({ Shows }) => {
-        return Shows;
-      });
 
-      const bookmarkedMovies = bookmarkedShows.filter(
+      const bookmarkedMovies = bookmarkedShows?.filter(
         ({ category }) => category === "Movie"
       );
 
       setBookmarkedMovies(bookmarkedMovies);
-      const bookmarkedTVSeries = bookmarkedShows.filter(
+      const bookmarkedTVSeries = bookmarkedShows?.filter(
         ({ category }) => category === "TV Series"
       );
 
@@ -86,7 +89,7 @@ export default function Bookmarkeds() {
             <span className="sr-only">Loading...</span>
           </div>
         </div>
-      ) : !bookmarkedShows[0] ? (
+      ) : bookmarkedShows && !bookmarkedShows[0] ? (
         <Title title={"You don't have a bookmarked shows!"} />
       ) : (
         <section className=" w-full">
@@ -96,7 +99,7 @@ export default function Bookmarkeds() {
             onFocusHandler={(status) => checkSearchStatus(status)}
             userId={session?.user.id}
           />
-          {!searchActive && bookmarkedMovies.length > 0 && (
+          {!searchActive && bookmarkedMovies && bookmarkedMovies.length > 0 && (
             <>
               <Title
                 title={"Bookmarked Movies"}
@@ -119,29 +122,33 @@ export default function Bookmarkeds() {
               </article>
             </>
           )}
-          {!searchActive && bookmarkedTVSeries.length > 0 && (
-            <>
-              <Title
-                title={"Bookmarked Tv Series"}
-                bookmarkedtvSeries={bookmarkedMovies.length > 0 ? true : false}
-              />
-              <article className=" grid grid-cols-2 mx-4 gap-4 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
-                {bookmarkedTVSeries.map(
-                  ({ title, year, category, rating, id }, index) => (
-                    <Cards
-                      key={index}
-                      id={id}
-                      title={title}
-                      year={year}
-                      category={category}
-                      rating={rating}
-                      userId={session?.user.id}
-                    />
-                  )
-                )}
-              </article>
-            </>
-          )}
+          {!searchActive &&
+            bookmarkedTVSeries &&
+            bookmarkedTVSeries.length > 0 && (
+              <>
+                <Title
+                  title={"Bookmarked Tv Series"}
+                  bookmarkedtvSeries={
+                    bookmarkedMovies.length > 0 ? true : false
+                  }
+                />
+                <article className=" grid grid-cols-2 mx-4 gap-4 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
+                  {bookmarkedTVSeries.map(
+                    ({ title, year, category, rating, id }, index) => (
+                      <Cards
+                        key={index}
+                        id={id}
+                        title={title}
+                        year={year}
+                        category={category}
+                        rating={rating}
+                        userId={session?.user.id}
+                      />
+                    )
+                  )}
+                </article>
+              </>
+            )}
         </section>
       )}
     </>
