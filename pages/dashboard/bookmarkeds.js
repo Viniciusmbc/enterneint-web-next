@@ -7,6 +7,9 @@ import { useState, useEffect } from "react";
 // Auth Context
 import { useAuth } from "../../context/AuthContext";
 
+// SWR
+import useSWR from "swr";
+
 // Layout
 import { getLayout } from "../../components/NestedLayout";
 
@@ -18,24 +21,56 @@ import Title from "../../components/Title";
 // Supabase
 import { supabase } from "../../utils/supabaseClient";
 
-export default function Bookmarked({ bookmarkedShows, userId }) {
-  const bookmarkedMovies = bookmarkedShows?.filter(({ category }) => {
-    return category === "Movie";
-  });
+export default function Bookmarkeds() {
+  // auth context
+  const { session } = useAuth();
 
-  const bookmarkedTVseries = bookmarkedShows?.filter(({ category }) => {
-    return category === "TV Series";
-  });
+  // State
+  const [isLoading, setIsLoading] = useState(true);
+  const [bookmarkedShows, setBookmarkedShows] = useState();
+  const [bookmarkedMovies, setBookmarkedMovies] = useState();
+  const [bookmarkedTVSeries, setBookmarkedTVSeries] = useState();
+
+  useEffect(() => {
+    const getData = async () => {
+      const { data, error } = await supabase
+        .from("userfavoriteshows")
+        .select("shows_id, Shows(*)")
+        .eq("user_id", session?.user.id);
+      data.length === 0
+        ? setBookmarkedShows([false])
+        : setBookmarkedShows(data);
+
+      if (error) {
+        return console.log(`Error: ${error}`);
+      }
+      const bookmarkedShows = data.map(({ Shows }) => {
+        return Shows;
+      });
+
+      const bookmarkedMovies = bookmarkedShows.filter(
+        ({ category }) => category === "Movie"
+      );
+
+      setBookmarkedMovies(bookmarkedMovies);
+      const bookmarkedTVSeries = bookmarkedShows.filter(
+        ({ category }) => category === "TV Series"
+      );
+
+      setBookmarkedTVSeries(bookmarkedTVSeries);
+    };
+
+    session?.user.id ? getData() && setIsLoading(false) : setIsLoading(true);
+  }, [session]);
+
+  console.log(bookmarkedShows);
 
   // Search state
   const [searchActive, setSearchActive] = useState(false);
 
   // If search state is active, show the data
   const checkSearchStatus = (status) => {
-    if (status) {
-      return setSearchActive(true);
-    }
-    return setSearchActive(false);
+    status ? setSearchActive(true) : setSearchActive(false);
   };
 
   return (
@@ -45,20 +80,29 @@ export default function Bookmarked({ bookmarkedShows, userId }) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
-      {bookmarkedShows.length === 0 ? (
+      {isLoading ? (
+        <div className="flex justify-center items-center h-screen">
+          <div className="spinner-border text-primary" role="status">
+            <span className="sr-only">Loading...</span>
+          </div>
+        </div>
+      ) : !bookmarkedShows[0] ? (
         <Title title={"You don't have a bookmarked shows!"} />
       ) : (
-        <main className=" w-full">
+        <section className=" w-full">
           <SearchBar
             shows={"bookmarked shows"}
             data={bookmarkedShows}
             onFocusHandler={(status) => checkSearchStatus(status)}
-            userId={userId}
+            userId={session?.user.id}
           />
           {!searchActive && bookmarkedMovies.length > 0 && (
             <>
-              <Title title={"Bookmarked Movies"} />
-              <section className=" grid grid-cols-2 mx-4 gap-4 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
+              <Title
+                title={"Bookmarked Movies"}
+                bookmarkedtvSeries={bookmarkedMovies.length > 0 ? true : false}
+              />
+              <article className=" grid grid-cols-2 mx-4 gap-4 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
                 {bookmarkedMovies.map(
                   ({ title, year, category, rating, id }, index) => (
                     <Cards
@@ -68,51 +112,46 @@ export default function Bookmarked({ bookmarkedShows, userId }) {
                       year={year}
                       category={category}
                       rating={rating}
-                      userId={userId}
+                      userId={session?.user.id}
                     />
                   )
                 )}
-              </section>
-              {bookmarkedTVseries.length > 0 && (
-                <>
-                  <Title
-                    title={"Bookmarked TV Series"}
-                    bookmarkedtvSeries={
-                      bookmarkedMovies.length > 0 ? true : false
-                    }
-                  />
-                  <section className=" grid grid-cols-2 mx-4 gap-4 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
-                    {bookmarkedTVseries.map(
-                      ({ title, year, category, rating, id }, index) => (
-                        <Cards
-                          key={index}
-                          id={id}
-                          title={title}
-                          year={year}
-                          category={category}
-                          rating={rating}
-                          userId={userId}
-                        />
-                      )
-                    )}
-                  </section>
-                </>
-              )}
+              </article>
             </>
           )}
-        </main>
+          {!searchActive && bookmarkedTVSeries.length > 0 && (
+            <>
+              <Title
+                title={"Bookmarked Tv Series"}
+                bookmarkedtvSeries={bookmarkedMovies.length > 0 ? true : false}
+              />
+              <article className=" grid grid-cols-2 mx-4 gap-4 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
+                {bookmarkedTVSeries.map(
+                  ({ title, year, category, rating, id }, index) => (
+                    <Cards
+                      key={index}
+                      id={id}
+                      title={title}
+                      year={year}
+                      category={category}
+                      rating={rating}
+                      userId={session?.user.id}
+                    />
+                  )
+                )}
+              </article>
+            </>
+          )}
+        </section>
       )}
     </>
   );
 }
 
-Bookmarked.getLayout = getLayout;
+Bookmarkeds.getLayout = getLayout;
 
+/*
 export async function getServerSideProps({ req, res }) {
-  // Get user by cookie
-  const { user } = await supabase.auth.api.getUserByCookie(req);
-  console.log(user);
-
   // Get all favorite shows
   const { data, error } = await supabase
     .from("userfavoriteshows")
@@ -129,9 +168,8 @@ export async function getServerSideProps({ req, res }) {
 
   return {
     props: {
-      userId: user.id,
-
       bookmarkedShows,
     },
   };
 }
+*/

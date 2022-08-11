@@ -24,7 +24,6 @@ export default function Cards({ id, title, year, category, rating }) {
   const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
-    setIsLoading(true);
     const getData = async () => {
       const { data, error } = await supabase
         .from("userfavoriteshows")
@@ -57,8 +56,8 @@ export default function Cards({ id, title, year, category, rating }) {
       console.log(`Error: ${error}`);
     }
     setBookmarkedShowsId((prev) => new Set(prev).add(data.shows_id));
-    setIsLoading(false);
     setBookmark(true);
+    setIsLoading(false);
   };
 
   // If user click on the bookmark button, remove the show from the user's bookmarked shows
@@ -77,8 +76,9 @@ export default function Cards({ id, title, year, category, rating }) {
       next.delete(id);
       return next;
     });
-    setIsLoading(false);
+
     setBookmark(false);
+    setIsLoading(false);
   };
 
   // If user click on the bookmark button, add the show to the user's bookmarked shows or delete it from the user's bookmarked shows
@@ -144,6 +144,7 @@ export default function Cards({ id, title, year, category, rating }) {
           )}/regular/small.jpg`}
           alt={`${title} poster`}
           layout="fill"
+          priority
         />
       </div>
 

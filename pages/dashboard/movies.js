@@ -4,6 +4,9 @@ import Head from "next/head";
 // React Hooks
 import { useEffect, useState } from "react";
 
+// Auth Context
+import { useAuth } from "/context/AuthContext";
+
 // Components
 import Cards from "../../components/Cards";
 import SearchBar from "../../components/SearchBar";
@@ -12,15 +15,20 @@ import { getLayout } from "../../components/NestedLayout";
 // Supabase
 import { supabase } from "../../utils/supabaseClient";
 
-export default function Movies({ data, userId }) {
+export default function Movies({ data }) {
+  const { session, isLoading } = useAuth();
+
   // Search state
   const [searchActive, setSearchActive] = useState(false);
+
+  // If search state is active, show the data
   const checkSearchStatus = (status) => {
-    if (status) {
-      setSearchActive(true);
-    }
-    return setSearchActive(false);
+    status ? setSearchActive(true) : setSearchActive(false);
   };
+
+  if (!session) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>
@@ -48,7 +56,7 @@ export default function Movies({ data, userId }) {
                   year={year}
                   category={category}
                   rating={rating}
-                  userId={userId}
+                  userId={session.user.id}
                 />
               ))}
           </section>
@@ -59,9 +67,6 @@ export default function Movies({ data, userId }) {
 }
 
 export async function getServerSideProps({ req, res }) {
-  // Get user by cookie
-  const { user } = await supabase.auth.api.getUserByCookie(req);
-
   // Get Movies shows
   const { data } = await supabase
     .from("Shows")
@@ -71,7 +76,6 @@ export async function getServerSideProps({ req, res }) {
   return {
     props: {
       data,
-      userId: user.id,
     },
   };
 }

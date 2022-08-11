@@ -1,40 +1,36 @@
 // next
 import Head from "next/head";
 
-// SWR
-import useSWR from "swr";
+// Auth Context
+import { useAuth } from "/context/AuthContext";
 
-// react
+// React Hooks
 import { useEffect, useState } from "react";
 
-// components
+// Components
 import Cards from "../../components/Cards";
 import SearchBar from "../../components/SearchBar";
 
-// layouts
+// Layouts
 import { getLayout } from "../../components/NestedLayout";
 
 // supabase
 import { supabase } from "../../utils/supabaseClient";
 
-export default function Series({ tvseries, userId }) {
+export default function TVSeries({ tvseries }) {
+  const { session, isLoading } = useAuth();
+
+  // Search State
   const [searchActive, setSearchActive] = useState(false);
-  // Store the message if the bookmarked shows is add
-  const [message, setMessage] = useState("");
 
-  console.log(userId);
-
+  // If search state is active, show the data
   const checkSearchStatus = (status) => {
-    if (status) {
-      setSearchActive(true);
-    }
-    return setSearchActive(false);
+    status ? setSearchActive(true) : setSearchActive(false);
   };
 
-  const pull_data = (data) => {
-    console.log(data);
-    setMessage(data);
-  };
+  if (!session) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <section className=" w-full">
@@ -51,7 +47,7 @@ export default function Series({ tvseries, userId }) {
       />
 
       {!searchActive && (
-        <section className=" grid grid-cols-2 mx-4 gap-4 mb-14 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
+        <article className=" grid grid-cols-2 mx-4 gap-4 mb-14 md:grid-cols-3  lg:grid-cols-4 lg:gap-x-10 lg:gap-y-8 ">
           {tvseries &&
             tvseries.map(({ title, year, category, id, rating }) => (
               <Cards
@@ -61,19 +57,16 @@ export default function Series({ tvseries, userId }) {
                 year={year}
                 category={category}
                 rating={rating}
-                userId={userId}
+                userId={session.user.id}
               />
             ))}
-        </section>
+        </article>
       )}
     </section>
   );
 }
 
 export async function getServerSideProps({ req, res }) {
-  // Get user by cookie
-  const { user } = await supabase.auth.api.getUserByCookie(req);
-
   // Get trending shows
   const { data: tvseries } = await supabase
     .from("Shows")
@@ -83,9 +76,8 @@ export async function getServerSideProps({ req, res }) {
   return {
     props: {
       tvseries,
-      userId: user.id,
     },
   };
 }
 
-Series.getLayout = getLayout;
+TVSeries.getLayout = getLayout;

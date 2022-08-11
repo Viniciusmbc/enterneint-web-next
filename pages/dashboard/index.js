@@ -1,9 +1,9 @@
 // Nextjs
 import Head from "next/head";
-import Image from "next/image";
+import { useRouter } from "next/router";
 
 // React Hooks
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // Auth Context
 import { useAuth } from "/context/AuthContext";
@@ -13,19 +13,15 @@ import Cards from "/components/Cards";
 import Trending from "/components/Trending";
 import SearchBar from "/components/SearchBar";
 
-// Change IMG src
-import { changeImageSrc } from "../../utils/changeImageSrc";
-
 // Layouts
 import { getLayout } from "/components/NestedLayout";
 
 // Supabase
 import { supabase } from "/utils/supabaseClient";
+import { LoadingSpinner } from "../../components/Icons";
 
 export default function Home({ trendings, allshows }) {
-  const { session } = useAuth();
-
-  console.log(session);
+  const { session, isLoading } = useAuth();
 
   // Search state
   const [searchActive, setSearchActive] = useState(false);
@@ -36,10 +32,22 @@ export default function Home({ trendings, allshows }) {
   };
 
   if (!session) {
-    return <div>You are not logged in</div>;
+    return (
+      <main className="flex flex-col justify-center items-center">
+        <h1 className="text-3xl font-bold text-center absolute ">
+          You need to be logged in to view this page
+        </h1>
+      </main>
+    );
   }
 
-  return (
+  return isLoading ? (
+    <main className="flex flex-col justify-center items-center">
+      <h1 className="text-3xl font-bold text-center absolute ">
+        <LoadingSpinner />
+      </h1>
+    </main>
+  ) : (
     <section>
       <Head>
         <title>Home</title>

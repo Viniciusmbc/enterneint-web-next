@@ -7,6 +7,7 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [session, setSession] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     // Check active sessions and sets the user
@@ -20,6 +21,7 @@ export const AuthProvider = ({ children }) => {
         setSession(session);
       }
     );
+    setIsLoading(false);
     return () => {
       authListener?.unsubscribe();
     };
@@ -31,7 +33,8 @@ export const AuthProvider = ({ children }) => {
   const signOut = () => supabase.auth.signOut();
 
   return (
-    <AuthContext.Provider value={{ signUp, signIn, signOut, session }}>
+    <AuthContext.Provider
+      value={{ signUp, signIn, signOut, session, isLoading }}>
       {children}
     </AuthContext.Provider>
   );
