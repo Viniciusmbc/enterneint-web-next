@@ -19,9 +19,10 @@ import { getLayout } from "/components/NestedLayout";
 // Supabase
 import { supabase } from "/utils/supabaseClient";
 import { LoadingSpinner } from "../../components/Icons";
+import Layout from "../../components/Layout";
 
 export default function Home({ trendings, allshows }) {
-  const { session, isLoading } = useAuth();
+  const { session, isLoading, signOut } = useAuth();
 
   // Search state
   const [searchActive, setSearchActive] = useState(false);
@@ -30,16 +31,6 @@ export default function Home({ trendings, allshows }) {
   const checkSearchStatus = (status) => {
     status ? setSearchActive(true) : setSearchActive(false);
   };
-
-  if (!session) {
-    return (
-      <main className="flex flex-col justify-center items-center">
-        <h1 className="text-3xl font-bold text-center absolute ">
-          You need to be logged in to view this page
-        </h1>
-      </main>
-    );
-  }
 
   return isLoading ? (
     <main className="flex flex-col justify-center items-center">
@@ -54,6 +45,8 @@ export default function Home({ trendings, allshows }) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
+
+      <button onClick={() => signOut()}>Logout</button>
 
       <SearchBar
         shows={"movies or TV series"}

@@ -155,6 +155,7 @@ export default function Trending({ year, category, rating, title, id }) {
         alt={`${title} poster`}
         width={470}
         height={230}
+        priority
       />
     </div>
   );

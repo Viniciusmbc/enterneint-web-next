@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }) => {
     return () => {
       authListener?.unsubscribe();
     };
-  }, []);
+  }, [session]);
 
   // Add functions to context value
   const signUp = (data) => supabase.auth.signUp(data);

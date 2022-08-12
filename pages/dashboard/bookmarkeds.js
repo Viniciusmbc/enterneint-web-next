@@ -7,8 +7,8 @@ import { useState, useEffect } from "react";
 // Auth Context
 import { useAuth } from "../../context/AuthContext";
 
-// SWR
-import useSWR from "swr";
+// Icons
+import { LoadingSpinner } from "/components/Icons";
 
 // Layout
 import { getLayout } from "../../components/NestedLayout";
@@ -38,7 +38,6 @@ export default function Bookmarkeds() {
         .select("shows_id, Shows(*)")
         .eq("user_id", session?.user.id);
 
-      console.log(data);
       data && data.length === 0
         ? setBookmarkedShows([false])
         : setBookmarkedShows(
@@ -64,9 +63,7 @@ export default function Bookmarkeds() {
     };
 
     session?.user.id ? getData() && setIsLoading(false) : setIsLoading(true);
-  }, [session]);
-
-  console.log(bookmarkedShows);
+  }, [session, bookmarkedShows]);
 
   // Search state
   const [searchActive, setSearchActive] = useState(false);
@@ -76,7 +73,13 @@ export default function Bookmarkeds() {
     status ? setSearchActive(true) : setSearchActive(false);
   };
 
-  return (
+  return isLoading ? (
+    <main className="flex flex-col justify-center items-center">
+      <h1 className="text-3xl font-bold text-center absolute ">
+        <LoadingSpinner />
+      </h1>
+    </main>
+  ) : (
     <>
       <Head>
         <title>Bookmarked Shows</title>
@@ -89,7 +92,7 @@ export default function Bookmarkeds() {
             <span className="sr-only">Loading...</span>
           </div>
         </div>
-      ) : bookmarkedShows && !bookmarkedShows[0] ? (
+      ) : bookmarkedShows && bookmarkedShows[0] === false ? (
         <Title title={"You don't have a bookmarked shows!"} />
       ) : (
         <section className=" w-full">
@@ -99,7 +102,7 @@ export default function Bookmarkeds() {
             onFocusHandler={(status) => checkSearchStatus(status)}
             userId={session?.user.id}
           />
-          {!searchActive && bookmarkedMovies && bookmarkedMovies.length > 0 && (
+          {!searchActive && !!bookmarkedMovies && bookmarkedMovies.length > 0 && (
             <>
               <Title
                 title={"Bookmarked Movies"}
@@ -156,27 +159,3 @@ export default function Bookmarkeds() {
 }
 
 Bookmarkeds.getLayout = getLayout;
-
-/*
-export async function getServerSideProps({ req, res }) {
-  // Get all favorite shows
-  const { data, error } = await supabase
-    .from("userfavoriteshows")
-    .select("shows_id, Shows(*)")
-    .eq("user_id", user.id);
-
-  const bookmarkedShows = data.map(({ Shows }) => {
-    return Shows;
-  });
-
-  if (error) {
-    return console.log(`Error: ${error}`);
-  }
-
-  return {
-    props: {
-      bookmarkedShows,
-    },
-  };
-}
-*/
