@@ -1,9 +1,8 @@
 // Nextjs
 import Head from "next/head";
-import { useRouter } from "next/router";
 
 // React Hooks
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 // Auth Context
 import { useAuth } from "/context/AuthContext";
@@ -19,9 +18,9 @@ import { getLayout } from "/components/NestedLayout";
 // Supabase
 import { supabase } from "/utils/supabaseClient";
 import { LoadingSpinner } from "../../components/Icons";
-import Layout from "../../components/Layout";
 
 export default function Home({ trendings, allshows }) {
+  // Auth context
   const { session, isLoading, signOut } = useAuth();
 
   // Search state
@@ -35,7 +34,7 @@ export default function Home({ trendings, allshows }) {
   return isLoading ? (
     <main className="flex flex-col justify-center items-center">
       <h1 className="text-3xl font-bold text-center absolute ">
-        <LoadingSpinner />
+        <LoadingSpinner color={"#FFF"} />
       </h1>
     </main>
   ) : (
@@ -45,8 +44,6 @@ export default function Home({ trendings, allshows }) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
-
-      <button onClick={() => signOut()}>Logout</button>
 
       <SearchBar
         shows={"movies or TV series"}
@@ -68,7 +65,7 @@ export default function Home({ trendings, allshows }) {
                   year={year}
                   category={category}
                   rating={rating}
-                  userId={session.user.id}
+                  session={session}
                 />
               ))}
           </article>

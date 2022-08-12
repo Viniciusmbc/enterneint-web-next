@@ -30,11 +30,9 @@ export const AuthProvider = ({ children }) => {
   // Add functions to context value
   const signUp = (data) => supabase.auth.signUp(data);
   const signIn = (data) => supabase.auth.signIn(data);
-  const signOut = () => supabase.auth.signOut();
 
   return (
-    <AuthContext.Provider
-      value={{ signUp, signIn, signOut, session, isLoading }}>
+    <AuthContext.Provider value={{ signUp, signIn, session, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

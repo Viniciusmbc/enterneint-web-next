@@ -14,7 +14,7 @@ export default function Signup() {
   const router = useRouter();
 
   // Loading state
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // useRef to store the input element
   const emailRef = useRef();
@@ -72,7 +72,8 @@ export default function Signup() {
           </div>
           <form
             onSubmit={handleSubmit}
-            className="mx-auto flex w-80 flex-col rounded-md bg-semiDarkBlue px-10">
+            className="mx-auto flex w-80 flex-col rounded-md bg-semiDarkBlue px-10"
+          >
             <h1 className="mt-6 text-2xl text-white">Sign Up</h1>
             <input
               required
@@ -98,7 +99,8 @@ export default function Signup() {
             <button
               className="mt-10 rounded-md bg-red hover:bg-white py-2"
               type="submit"
-              disabled={isLoading}>
+              disabled={isLoading}
+            >
               Create an account
             </button>{" "}
             {error && (
@@ -108,7 +110,7 @@ export default function Signup() {
             )}
             <div className="mx-auto py-6">
               <p className="text-white">
-                Alread have an account?
+                Already have an account?
                 <Link href={"/login"}>
                   <a className="text-red"> Login</a>
                 </Link>

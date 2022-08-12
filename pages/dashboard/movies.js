@@ -4,8 +4,8 @@ import Head from "next/head";
 // React Hooks
 import { useEffect, useState } from "react";
 
-// Auth Context
-import { useAuth } from "/context/AuthContext";
+// Icons
+import { LoadingSpinner } from "../../components/Icons";
 
 // Components
 import Cards from "../../components/Cards";
@@ -14,8 +14,10 @@ import { getLayout } from "../../components/NestedLayout";
 
 // Supabase
 import { supabase } from "../../utils/supabaseClient";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Movies({ data }) {
+  // Auth context
   const { session, isLoading } = useAuth();
 
   // Search state
@@ -26,11 +28,13 @@ export default function Movies({ data }) {
     status ? setSearchActive(true) : setSearchActive(false);
   };
 
-  if (!session) {
-    return <div>Loading...</div>;
-  }
-
-  return (
+  return isLoading ? (
+    <main className="flex flex-col justify-center items-center">
+      <h1 className="text-3xl font-bold text-center absolute ">
+        <LoadingSpinner color={"#FFF"} />
+      </h1>
+    </main>
+  ) : (
     <>
       <Head>
         <title>Movies</title>
@@ -56,7 +60,7 @@ export default function Movies({ data }) {
                   year={year}
                   category={category}
                   rating={rating}
-                  userId={session.user.id}
+                  userId={session?.user.id}
                 />
               ))}
           </section>

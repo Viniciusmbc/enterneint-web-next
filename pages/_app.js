@@ -14,6 +14,9 @@ import { supabase } from "/utils/supabaseClient";
 import { AuthProvider } from "../context/AuthContext";
 import Link from "next/link";
 
+// Icons
+import { LoadingSpinner } from "../components/Icons";
+
 export default function MyApp({ Component, pageProps }) {
   // Use the layout defined at the page level, if available
   const getLayout = Component.getLayout || ((page) => page);
@@ -43,7 +46,13 @@ export default function MyApp({ Component, pageProps }) {
     };
   }, [session]);
 
-  return (session?.access_token && session?.refresh_token) ||
+  return isLoading ? (
+    <main className="flex flex-col justify-center items-center">
+      <h1 className="text-3xl font-bold text-center absolute ">
+        <LoadingSpinner color={"#FFF"} />
+      </h1>
+    </main>
+  ) : (session?.access_token && session?.refresh_token) ||
     router.pathname === "/login" ||
     router.pathname === "/signup" ? (
     getLayout(
@@ -58,7 +67,7 @@ export default function MyApp({ Component, pageProps }) {
       </h1>
       <div className="mx-auto py-10">
         <p className="text-white text-2xl">
-          Alread have an account?
+          Already have an account?
           <Link href={"/login"}>
             <a className="text-red"> Login</a>
           </Link>

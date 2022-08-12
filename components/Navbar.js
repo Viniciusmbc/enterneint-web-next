@@ -6,8 +6,14 @@ import Image from "next/image";
 // Icons
 import { HomeIcon, MoviesIcon, TVIcon, BookmarkIcon } from "./Icons";
 
+// supabase
+import { supabase } from "../utils/supabaseClient";
+
 export default function Navbar() {
   const router = useRouter();
+
+  // Signout Function
+  const signOut = () => supabase.auth.signOut();
 
   return (
     <nav className="flex items-center justify-between bg-semiDarkBlue py-5 px-4 h-1/4 md:flex-col md:ml-8  md:rounded-2xl md:justify-start md:mr-9 md:h-[95vh] md:mt-5 ">
@@ -42,7 +48,7 @@ export default function Navbar() {
         </Link>
       </div>
 
-      <div className=" md:mt-auto">
+      <div className=" flex md:mt-auto">
         <Image
           width={40}
           height={40}
@@ -50,6 +56,12 @@ export default function Navbar() {
           alt="avatar"
         />
       </div>
+      <button
+        className=" text-white hover:text-red text-sm mt-4 "
+        onClick={() => signOut()}
+      >
+        Logout
+      </button>
     </nav>
   );
 }

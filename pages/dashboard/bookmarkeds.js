@@ -22,7 +22,7 @@ import Title from "../../components/Title";
 import { supabase } from "../../utils/supabaseClient";
 
 export default function Bookmarkeds() {
-  // auth context
+  // Auth Context
   const { session } = useAuth();
 
   // State
@@ -38,6 +38,9 @@ export default function Bookmarkeds() {
         .select("shows_id, Shows(*)")
         .eq("user_id", session?.user.id);
 
+      if (error) {
+        return console.log(`Error: ${error}`);
+      }
       data && data.length === 0
         ? setBookmarkedShows([false])
         : setBookmarkedShows(
@@ -45,11 +48,6 @@ export default function Bookmarkeds() {
               return Shows;
             })
           );
-
-      if (error) {
-        return console.log(`Error: ${error}`);
-      }
-
       const bookmarkedMovies = bookmarkedShows?.filter(
         ({ category }) => category === "Movie"
       );
@@ -76,7 +74,7 @@ export default function Bookmarkeds() {
   return isLoading ? (
     <main className="flex flex-col justify-center items-center">
       <h1 className="text-3xl font-bold text-center absolute ">
-        <LoadingSpinner />
+        <LoadingSpinner color={"#FFF"} />
       </h1>
     </main>
   ) : (
@@ -126,7 +124,7 @@ export default function Bookmarkeds() {
             </>
           )}
           {!searchActive &&
-            bookmarkedTVSeries &&
+            !!bookmarkedTVSeries &&
             bookmarkedTVSeries.length > 0 && (
               <>
                 <Title
