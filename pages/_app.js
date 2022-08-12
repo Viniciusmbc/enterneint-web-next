@@ -16,6 +16,7 @@ import Link from "next/link";
 
 // Icons
 import { LoadingSpinner } from "../components/Icons";
+import Head from "next/head";
 
 export default function MyApp({ Component, pageProps }) {
   // Use the layout defined at the page level, if available
@@ -61,24 +62,31 @@ export default function MyApp({ Component, pageProps }) {
       </AuthProvider>
     )
   ) : (
-    <main className="flex flex-col justify-center items-center ">
-      <h1 className="text-3xl font-bold text-center text-white pt-28">
-        You need to be logged in to view this page
-      </h1>
-      <div className="mx-auto py-10">
-        <p className="text-white text-2xl">
-          Already have an account?
-          <Link href={"/login"}>
-            <a className="text-red"> Login</a>
+    <main>
+      <Head>
+        <title>Protected Page</title>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+      </Head>
+      <section className="flex flex-col justify-center items-center ">
+        <h1 className="text-3xl font-bold text-center text-white pt-28">
+          You need to be logged in to view this page
+        </h1>
+        <div className="mx-auto py-10">
+          <p className="text-white text-2xl">
+            Already have an account?
+            <Link href={"/login"}>
+              <a className="text-red"> Login</a>
+            </Link>
+          </p>
+        </div>
+        <p className="text-white text-center text-2xl">
+          {`Don't have an account?`}
+          <Link href="/signup">
+            <a className="text-red "> Sign Up</a>
           </Link>
-        </p>
-      </div>
-      <p className="text-white text-center text-2xl">
-        {`Don't have an account?`}
-        <Link href="/signup">
-          <a className="text-red "> Sign Up</a>
-        </Link>
-      </p>{" "}
+        </p>{" "}
+      </section>
     </main>
   );
 }
