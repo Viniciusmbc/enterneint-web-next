@@ -14,7 +14,7 @@ export default function Signup() {
   const router = useRouter();
 
   // Loading state
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   // useRef to store the input element
   const emailRef = useRef();
